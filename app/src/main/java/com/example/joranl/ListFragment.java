@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 public class ListFragment extends Fragment {
 
-    TextView textView;
 
     public ListFragment() {
     }
@@ -24,10 +23,7 @@ public class ListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        textView = view.findViewById(R.id.text_view);
-        String sTitle = getArguments().getString("title");
 
-        textView.setText(sTitle);
         return view;
     }
 }

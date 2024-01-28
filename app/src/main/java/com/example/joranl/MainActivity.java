@@ -36,18 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList) {
         TabLayoutAdapter adapter = new TabLayoutAdapter(getSupportFragmentManager(), getApplicationContext());
 
-        ListFragment listFragment = new ListFragment();
-
-        for (int i = 0; i < arrayList.size(); i++) {
-            Bundle bundle = new Bundle();
-
-            bundle.putString("title", arrayList.get(i));
-            listFragment.setArguments(bundle);
-
-            adapter.addFragment(listFragment, arrayList.get(i));
-
-            listFragment = new ListFragment();
-        }
+        adapter.addFragment(new ListFragment(),"  List");
+        adapter.addFragment(new CalendarFragment(),"  Calendar");
         viewPager.setAdapter(adapter);
     }
 }
