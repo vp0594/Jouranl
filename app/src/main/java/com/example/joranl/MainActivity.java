@@ -1,6 +1,7 @@
 package com.example.joranl;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
+    public static AppDatabase appDatabase;
     TabLayout tabLayout;
     ViewPager viewPager;
 
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "calendar_database").build();
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
