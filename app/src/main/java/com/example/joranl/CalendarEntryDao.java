@@ -5,7 +5,6 @@ import androidx.room.Delete;
 import androidx.room.Query;
 import androidx.room.Upsert;
 
-import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -23,8 +22,8 @@ public interface CalendarEntryDao {
     @Delete
     void deleteEntry(CalendarEntry entry);
 
-    @Query("SELECT * FROM calendar_entries WHERE entryDate BETWEEN :startDate AND :endDate")
-    List<CalendarEntry> getEntriesForMonth(Date startDate, Date endDate);
+    @Query("SELECT * FROM calendar_entries WHERE strftime('%Y-%m',entryDate) BETWEEN :startDate AND :endDate")
+    List<CalendarEntry> getEnrieForMonth(String startDate, String endDate);
 
 
 }

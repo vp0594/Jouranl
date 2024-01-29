@@ -3,7 +3,7 @@ package com.example.joranl;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.sql.Date;
+
 
 
 @Entity(tableName = "calendar_entries")
@@ -19,7 +19,7 @@ public class CalendarEntry {
     private String imgUri;
 
     @ColumnInfo(name = "entryDate")
-    private Date entryDate;
+    private String entryDate;
 
     public long getId() {
         return id;
@@ -45,11 +45,11 @@ public class CalendarEntry {
         this.imgUri = imgUri;
     }
 
-    public Date getEntryDate() {
+    public String getEntryDate() {
         return entryDate;
     }
 
-    public void setEntryDate(Date entryDate) {
+    public void setEntryDate(String entryDate) {
         this.entryDate = entryDate;
     }
 }
