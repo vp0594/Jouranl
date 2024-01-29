@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 
@@ -14,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class ListFragment extends Fragment {
 
     private FloatingActionButton addEntryFAB;
+
 
     public ListFragment() {
     }
@@ -30,4 +35,6 @@ public class ListFragment extends Fragment {
 
         return view;
     }
+
+
 }
