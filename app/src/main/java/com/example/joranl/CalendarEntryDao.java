@@ -22,12 +22,8 @@ public interface CalendarEntryDao {
     @Delete
     void deleteEntry(CalendarEntry entry);
 
-    @Query("SELECT * FROM calendar_entries WHERE strftime('%Y-%m',entryDate) BETWEEN :startDate AND :endDate")
-    List<CalendarEntry> getEnrieForMonth(String startDate, String endDate);
-
-
-    @Query("SELECT * FROM calendar_entries WHERE entryDate LIKE :month")
-    List<CalendarEntry> getMonthEntry(String month);
+    @Query("SELECT * FROM calendar_entries WHERE entryDate LIKE :startPrefix || '%' || :endSuffix")
+    List<CalendarEntry> getMonthEntry(String startPrefix,String endSuffix);
 
 
 }

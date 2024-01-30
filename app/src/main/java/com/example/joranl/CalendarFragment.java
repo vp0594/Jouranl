@@ -42,10 +42,10 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         nextMonth = view.findViewById(R.id.nextMonth);
         selectedDate = LocalDate.now();
 
-        AppDataBase db = Room.databaseBuilder(getContext(),
-                AppDataBase.class, "CalendarEntry").build();
+        AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").allowMainThreadQueries().build();
 
-        monthEntry = db.calendarEntryDao().getMonthEntry(monthYearFromDate(selectedDate));
+        String[] strings = monthYearFromDate(selectedDate).split(" ");
+        monthEntry = db.calendarEntryDao().getMonthEntry(strings[0], strings[1]);
 
 
         setMonthView();
@@ -62,7 +62,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         //Making arraylist for storing month's day. Used for display CalendarView.
         ArrayList<String> dayInMonth = dayInMonthArray(selectedDate);
 
-        CalendarAdapter calendarAdapter = new CalendarAdapter(dayInMonth, this,monthEntry);
+        CalendarAdapter calendarAdapter = new CalendarAdapter(dayInMonth, this, monthEntry, getContext());
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
