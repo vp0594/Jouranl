@@ -184,7 +184,7 @@ public class EntryActivity extends AppCompatActivity {
             }
 
             if (entryText.isEmpty() && finalImageName.isEmpty()) {
-                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Entry text cannot be empty", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
                 return null;
             }
 
@@ -198,7 +198,7 @@ public class EntryActivity extends AppCompatActivity {
 
             db.calendarEntryDao().upsertEntry(calendarEntry);
 
-            runOnUiThread(() -> Toast.makeText(EntryActivity.this, "done", Toast.LENGTH_SHORT).show());
+            finish();
 
             return null;
         }
