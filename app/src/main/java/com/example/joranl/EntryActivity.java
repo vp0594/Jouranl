@@ -18,7 +18,7 @@ public class EntryActivity extends AppCompatActivity {
 
 
     private DatePicker entryDatePicker;
-    private EditText entryEditText;
+    private EditText entryEditTextAbove, entryEditTextBelow;
     private ImageView imageView;
     private ImageButton closeImageButton;
     private FloatingActionButton addImageFAB;
@@ -32,16 +32,30 @@ public class EntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_entry);
 
         entryDatePicker = findViewById(R.id.entryDatePicker);
-        entryEditText = findViewById(R.id.entryEditText);
+        entryEditTextAbove = findViewById(R.id.entryEditTextAbove);
+        entryEditTextBelow = findViewById(R.id.entryEditTextBelow);
         imageView = findViewById(R.id.imageView);
         closeImageButton = findViewById(R.id.closeImageButton);
         addImageFAB = findViewById(R.id.galleryFab);
         saveEntryFAB = findViewById(R.id.saveFab);
 
+        entryEditTextAbove.requestFocus();
+
         addImageFAB.setOnClickListener(v -> getImage());
         closeImageButton.setOnClickListener(v -> {
             imageView.setImageDrawable(null);
             closeImageButton.setVisibility(View.GONE);
+
+            if (entryEditTextBelow.getText().toString().equals("")) {
+                entryEditTextBelow.setVisibility(View.GONE);
+            } else {
+                String temp = entryEditTextAbove.getText().toString() + "\n\n" + entryEditTextBelow.getText().toString();
+                entryEditTextAbove.setText(temp);
+                entryEditTextBelow.setVisibility(View.GONE);
+                entryEditTextAbove.requestFocus();
+                entryEditTextAbove.setSelection(entryEditTextAbove.getText().length());
+            }
+
         });
 
     }
@@ -57,7 +71,17 @@ public class EntryActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == GALLERY_REQUEST_CODE) {
-            closeImageButton.setVisibility(View.VISIBLE);
+
+                closeImageButton.setVisibility(View.VISIBLE);
+                entryEditTextBelow.setVisibility(View.VISIBLE);
+
+                entryEditTextBelow.requestFocus();
+
+                if (entryEditTextAbove.getText().toString().equals("")) {
+                    entryEditTextAbove.setVisibility(View.GONE);
+                }
+
+                entryEditTextBelow.requestFocus();
                 imageView.setImageURI(data.getData());
             }
         }

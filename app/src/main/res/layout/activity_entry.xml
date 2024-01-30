@@ -21,16 +21,26 @@
                 android:calendarViewShown="false"
                 android:datePickerMode="spinner" />
 
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_below="@id/entryDatePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
             <EditText
-                android:id="@+id/entryEditText"
+                android:layout_marginTop="10dp"
+                android:id="@+id/entryEditTextAbove"
+                android:paddingHorizontal="10dp"
+                android:hint="Start From Here"
+                android:inputType="textMultiLine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
                 android:layout_below="@id/entryDatePicker" />
 
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_below="@id/entryEditText"
+                android:layout_below="@id/entryEditTextAbove"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -56,6 +66,17 @@
                 android:background="@android:color/transparent"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
                 android:visibility="gone" />
+
+            <EditText
+                android:layout_marginTop="10dp"
+                android:id="@+id/entryEditTextBelow"
+                android:paddingHorizontal="10dp"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_below="@id/imageView"
+                android:layout_marginBottom="50dp"/>
         </RelativeLayout>
     </ScrollView>
 
