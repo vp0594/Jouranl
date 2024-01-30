@@ -28,8 +28,10 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
@@ -50,6 +52,7 @@ public class EntryActivity extends AppCompatActivity {
     private final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 2;
     private Uri imageUri;
     private boolean hasPermission = false;
+
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -101,13 +104,38 @@ public class EntryActivity extends AppCompatActivity {
 
     private void saveImage(String imagePath, String imageName) throws IOException {
 
-        FileOutputStream fos = openFileOutput(imageName, MODE_APPEND);
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+        String fileExtension = imageName.substring(imageName.lastIndexOf("."));
+        String newName = "image_" + timeStamp + "." + fileExtension;
+
+        Toast.makeText(this, newName, Toast.LENGTH_SHORT).show();
+        FileOutputStream fos = openFileOutput(newName, MODE_APPEND);
         File file = new File(imagePath);
 
         byte[] bytes = getBytesFromFile(file);
 
         fos.write(bytes);
         fos.close();
+
+
+//        byte[] byt = readBytesFromFile(newName);
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//        imageView.setImageBitmap(bitmap);
+    }
+
+    private byte[] readBytesFromFile(String name) throws IOException {
+        FileInputStream fis = openFileInput(name);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+
+        while ((bytesRead = fis.read(buffer)) != -1) {
+            bos.write(buffer, 0, bytesRead);
+        }
+
+        fis.close();
+        return bos.toByteArray();
     }
 
     private byte[] getBytesFromFile(File file) throws IOException {
