@@ -26,4 +26,8 @@ public interface CalendarEntryDao {
     List<CalendarEntry> getEnrieForMonth(String startDate, String endDate);
 
 
+    @Query("SELECT * FROM calendar_entries WHERE entryDate LIKE :month")
+    List<CalendarEntry> getMonthEntry(String month);
+
+
 }

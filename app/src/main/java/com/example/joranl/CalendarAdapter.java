@@ -1,8 +1,5 @@
 package com.example.joranl;
 
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
     private final ArrayList<String> dayOfMonth;
     private final OnItemListener onItemListener;
+    List<CalendarEntry> monthEntry;
 
-    public CalendarAdapter(ArrayList<String> dayOfMonth, OnItemListener onItemListener) {
+    public CalendarAdapter(ArrayList<String> dayOfMonth, OnItemListener onItemListener, List<CalendarEntry> monthEntry) {
         this.dayOfMonth = dayOfMonth;
         this.onItemListener = onItemListener;
+        this.monthEntry = monthEntry;
     }
 
 
@@ -38,11 +37,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         holder.dayOfMonth.setText(dayOfMonth.get(position));
-        if(Objects.equals(dayOfMonth.get(position), "3")){
-            holder.dateBackgroundImageView.setBackgroundResource(R.drawable.img);
-        }if(Objects.equals(dayOfMonth.get(position), "2")){
+
+        for (CalendarEntry entry : monthEntry){
+            if(entry.getEntryDate().contains(dayOfMonth.toString()) && entry.hasImage()){
+
+            }
         }
     }
+
 
     @Override
     public int getItemCount() {

@@ -21,6 +21,9 @@ public class CalendarEntry {
     @ColumnInfo(name = "entryDate")
     private String entryDate;
 
+    @ColumnInfo(name = "hasImage")
+    private boolean hasImage;
+
     public long getId() {
         return id;
     }
@@ -51,5 +54,13 @@ public class CalendarEntry {
 
     public void setEntryDate(String entryDate) {
         this.entryDate = entryDate;
+    }
+
+    public boolean hasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }

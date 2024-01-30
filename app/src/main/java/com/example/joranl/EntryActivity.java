@@ -192,6 +192,9 @@ public class EntryActivity extends AppCompatActivity {
             calendarEntry.setEntryText(entryText);
             calendarEntry.setEntryDate(entryDatePicker.getText().toString());
             calendarEntry.setImgUri(finalImageName);
+            if (!finalImageName.isEmpty()) {
+                calendarEntry.setHasImage(true);
+            }
 
             AppDataBase db = Room.databaseBuilder(getApplicationContext(),
                     AppDataBase.class, "CalendarEntry").build();
@@ -300,43 +303,43 @@ public class EntryActivity extends AppCompatActivity {
 
     private String getMonthFormat(int month) {
         if (month == 1) {
-            return "JAN";
+            return "Jan";
         }
         if (month == 2) {
-            return "FEB";
+            return "Feb";
         }
         if (month == 3) {
-            return "MAR";
+            return "Mar";
         }
         if (month == 4) {
-            return "APR";
+            return "Apr";
         }
         if (month == 5) {
-            return "MAY";
+            return "May";
         }
         if (month == 6) {
-            return "JUN";
+            return "Jun";
         }
         if (month == 7) {
-            return "JUL";
+            return "Jul";
         }
         if (month == 8) {
-            return "AUG";
+            return "Aug";
         }
         if (month == 9) {
-            return "SEP";
+            return "Sept";
         }
         if (month == 10) {
-            return "OCT";
+            return "Oct";
         }
         if (month == 11) {
-            return "NOV";
+            return "Nov";
         }
         if (month == 12) {
-            return "DEC";
+            return "Dec";
         }
 
-        return "JAN";
+        return "Jan";
     }
 
     private void closeImage() {

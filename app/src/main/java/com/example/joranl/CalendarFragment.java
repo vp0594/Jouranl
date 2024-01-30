@@ -12,12 +12,13 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 public class CalendarFragment extends Fragment implements CalendarAdapter.OnItemListener {
 
@@ -25,6 +26,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
     private RecyclerView calendarRecyclerView;
     private LocalDate selectedDate;
     private Button previousMonth, nextMonth;
+    List<CalendarEntry> monthEntry;
 
     public CalendarFragment() {
     }
@@ -40,6 +42,12 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         nextMonth = view.findViewById(R.id.nextMonth);
         selectedDate = LocalDate.now();
 
+        AppDataBase db = Room.databaseBuilder(getContext(),
+                AppDataBase.class, "CalendarEntry").build();
+
+        monthEntry = db.calendarEntryDao().getMonthEntry(monthYearFromDate(selectedDate));
+
+
         setMonthView();
 
         return view;
@@ -54,25 +62,19 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         //Making arraylist for storing month's day. Used for display CalendarView.
         ArrayList<String> dayInMonth = dayInMonthArray(selectedDate);
 
-        CalendarAdapter calendarAdapter = new CalendarAdapter(dayInMonth, this);
+        CalendarAdapter calendarAdapter = new CalendarAdapter(dayInMonth, this,monthEntry);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
 
-        previousMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedDate = selectedDate.minusMonths(1);
-                setMonthView();
-            }
+        previousMonth.setOnClickListener(v -> {
+            selectedDate = selectedDate.minusMonths(1);
+            setMonthView();
         });
 
-        nextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectedDate = selectedDate.plusMonths(1);
-                setMonthView();
-            }
+        nextMonth.setOnClickListener(v -> {
+            selectedDate = selectedDate.plusMonths(1);
+            setMonthView();
         });
     }
 
@@ -107,7 +109,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private String monthYearFromDate(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
         return date.format(formatter);
     }
 
