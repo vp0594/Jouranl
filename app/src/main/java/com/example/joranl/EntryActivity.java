@@ -74,6 +74,7 @@ public class EntryActivity extends AppCompatActivity {
         entryEditTextAbove.requestFocus();
 
         addImageFAB.setOnClickListener(v -> getImage());
+
         closeImageButton.setOnClickListener(v -> closeImage());
 
         saveEntryFAB.setOnClickListener(v -> saveEntry());
@@ -99,10 +100,9 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private void saveImage(String imagePath, String imageName) throws IOException {
+
         FileOutputStream fos = openFileOutput(imageName, MODE_APPEND);
-
         File file = new File(imagePath);
-
 
         byte[] bytes = getBytesFromFile(file);
 
@@ -111,20 +111,19 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private byte[] getBytesFromFile(File file) throws IOException {
-        byte[] bytes = FileUtils.readFileToByteArray(file);
-        return bytes;
+        return FileUtils.readFileToByteArray(file);
     }
 
     private String getImageName(Uri imageUri) {
+
         String result = null;
+
         if (imageUri.getScheme().equals("content")) {
             Cursor cursor = getApplicationContext().getContentResolver().query(imageUri, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
-
             }
             cursor.close();
-
         }
         if (result == null) {
             result = imageUri.getPath();
@@ -158,6 +157,7 @@ public class EntryActivity extends AppCompatActivity {
 
 
     private String getTodayDate() {
+
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
