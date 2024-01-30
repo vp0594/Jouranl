@@ -137,8 +137,16 @@ public class EntryActivity extends AppCompatActivity {
 
         if (entryEditTextBelow.getText().toString().equals("")) {
             entryEditTextBelow.setVisibility(View.GONE);
+            entryEditTextAbove.setVisibility(View.VISIBLE);
+            entryEditTextAbove.requestFocus();
         } else {
-            String temp = entryEditTextAbove.getText().toString() + "\n\n" + entryEditTextBelow.getText().toString();
+            String temp;
+            if (entryEditTextAbove.getText().toString().equals("")) {
+                temp = entryEditTextBelow.getText().toString();
+            } else {
+                temp = entryEditTextAbove.getText().toString() + "\n\n" + entryEditTextBelow.getText().toString();
+            }
+            entryEditTextAbove.setVisibility(View.VISIBLE);
             entryEditTextAbove.setText(temp);
             entryEditTextBelow.setVisibility(View.GONE);
             entryEditTextAbove.requestFocus();
@@ -160,8 +168,6 @@ public class EntryActivity extends AppCompatActivity {
 
                 closeImageButton.setVisibility(View.VISIBLE);
                 entryEditTextBelow.setVisibility(View.VISIBLE);
-
-                entryEditTextBelow.requestFocus();
 
                 if (entryEditTextAbove.getText().toString().equals("")) {
                     entryEditTextAbove.setVisibility(View.GONE);

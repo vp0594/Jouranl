@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EntryActivity">
@@ -9,7 +10,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="20dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,7 +21,7 @@
                 style="?android:spinnerStyle"
                 android:paddingRight="50dp"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content" />
@@ -28,7 +29,7 @@
             <EditText
                 android:layout_marginTop="10dp"
                 android:id="@+id/entryEditTextAbove"
-                android:paddingHorizontal="10dp"
+                android:paddingHorizontal="20dp"
                 android:hint="Start From Here"
                 android:inputType="textMultiLine"
                 android:layout_width="match_parent"
@@ -69,17 +70,16 @@
             <EditText
                 android:layout_marginTop="10dp"
                 android:id="@+id/entryEditTextBelow"
-                android:paddingHorizontal="10dp"
+                android:paddingHorizontal="20dp"
                 android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:layout_below="@id/imageView"
-                android:layout_marginBottom="50dp"/>
+                android:layout_marginBottom="100dp" />
         </RelativeLayout>
     </ScrollView>
 
-    <!-- FloatingActionButton for Save -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/saveFab"
         android:layout_width="wrap_content"
@@ -90,7 +90,6 @@
         android:layout_marginBottom="16dp"
         android:src="@android:drawable/ic_menu_save" />
 
-    <!-- FloatingActionButton for Gallery -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/galleryFab"
         android:layout_width="wrap_content"
