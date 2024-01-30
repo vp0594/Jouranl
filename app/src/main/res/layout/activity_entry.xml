@@ -8,23 +8,18 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <DatePicker
+            <Button
                 android:id="@+id/entryDatePicker"
-                android:layout_width="match_parent"
+                style="?android:spinnerStyle"
                 android:layout_height="wrap_content"
-                android:calendarViewShown="false"
-                android:datePickerMode="spinner" />
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_below="@id/entryDatePicker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_width="wrap_content" />
 
             <EditText
                 android:layout_marginTop="10dp"

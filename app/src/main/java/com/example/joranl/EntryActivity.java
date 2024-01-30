@@ -1,9 +1,12 @@
 package com.example.joranl;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -14,10 +17,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Calendar;
+
 public class EntryActivity extends AppCompatActivity {
 
 
-    private DatePicker entryDatePicker;
+    private Button entryDatePicker;
+    private DatePickerDialog datePickerDialog;
     private EditText entryEditTextAbove, entryEditTextBelow;
     private ImageView imageView;
     private ImageButton closeImageButton;
@@ -39,25 +45,105 @@ public class EntryActivity extends AppCompatActivity {
         addImageFAB = findViewById(R.id.galleryFab);
         saveEntryFAB = findViewById(R.id.saveFab);
 
+        initDatePicker();
+        entryDatePicker.setText(getTodayDate());
         entryEditTextAbove.requestFocus();
 
+        entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
         addImageFAB.setOnClickListener(v -> getImage());
-        closeImageButton.setOnClickListener(v -> {
-            imageView.setImageDrawable(null);
-            closeImageButton.setVisibility(View.GONE);
+        closeImageButton.setOnClickListener(v -> closeImage());
 
-            if (entryEditTextBelow.getText().toString().equals("")) {
-                entryEditTextBelow.setVisibility(View.GONE);
-            } else {
-                String temp = entryEditTextAbove.getText().toString() + "\n\n" + entryEditTextBelow.getText().toString();
-                entryEditTextAbove.setText(temp);
-                entryEditTextBelow.setVisibility(View.GONE);
-                entryEditTextAbove.requestFocus();
-                entryEditTextAbove.setSelection(entryEditTextAbove.getText().length());
+
+    }
+
+    private String getTodayDate() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        month = month + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        return makeDateString(day, month, year);
+    }
+
+    private void initDatePicker() {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                month = month + 1;
+                String date = makeDateString(dayOfMonth, month, year);
+                entryDatePicker.setText(date);
             }
+        };
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        });
+        int style = AlertDialog.THEME_HOLO_LIGHT;
 
+        datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
+    }
+
+    private String makeDateString(int dayOfMonth, int month, int year) {
+        return getMonthFormat(month) + " " + dayOfMonth + " " + year;
+    }
+
+    private String getMonthFormat(int month) {
+        if (month == 1) {
+            return "JAN";
+        }
+        if (month == 2) {
+            return "FEB";
+        }
+        if (month == 3) {
+            return "MAR";
+        }
+        if (month == 4) {
+            return "APR";
+        }
+        if (month == 5) {
+            return "MAY";
+        }
+        if (month == 6) {
+            return "JUN";
+        }
+        if (month == 7) {
+            return "JUL";
+        }
+        if (month == 8) {
+            return "AUG";
+        }
+        if (month == 9) {
+            return "SEP";
+        }
+        if (month == 10) {
+            return "OCT";
+        }
+        if (month == 11) {
+            return "NOV";
+        }
+        if (month == 12) {
+            return "DEC";
+        }
+
+        return "JAN";
+    }
+
+    private void closeImage() {
+        imageView.setImageDrawable(null);
+        closeImageButton.setVisibility(View.GONE);
+
+        if (entryEditTextBelow.getText().toString().equals("")) {
+            entryEditTextBelow.setVisibility(View.GONE);
+        } else {
+            String temp = entryEditTextAbove.getText().toString() + "\n\n" + entryEditTextBelow.getText().toString();
+            entryEditTextAbove.setText(temp);
+            entryEditTextBelow.setVisibility(View.GONE);
+            entryEditTextAbove.requestFocus();
+            entryEditTextAbove.setSelection(entryEditTextAbove.getText().length());
+        }
     }
 
     private void getImage() {
