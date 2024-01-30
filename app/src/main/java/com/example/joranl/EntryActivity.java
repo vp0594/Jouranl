@@ -259,8 +259,6 @@ public class EntryActivity extends AppCompatActivity {
 
         if (!hasPermission) {
             getImagePermission();
-        } else {
-            pickImage();
         }
 
     }
@@ -275,6 +273,8 @@ public class EntryActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_EXTERNAL_STORAGE);
+            } else {
+                pickImage();
             }
         }
         if (ContextCompat.checkSelfPermission(
@@ -282,6 +282,8 @@ public class EntryActivity extends AppCompatActivity {
         ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, PERMISSION_REQUEST_MEDIA_IMAGES);
+        } else {
+            pickImage();
         }
     }
 
