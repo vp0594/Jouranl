@@ -39,6 +39,10 @@ public class EntryActivity extends AppCompatActivity {
         saveEntryFAB = findViewById(R.id.saveFab);
 
         addImageFAB.setOnClickListener(v -> getImage());
+        closeImageButton.setOnClickListener(v -> {
+            imageView.setImageDrawable(null);
+            closeImageButton.setVisibility(View.GONE);
+        });
 
     }
 
@@ -51,7 +55,6 @@ public class EntryActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        entryEditText.setText("YEst");
         if (resultCode == RESULT_OK) {
             if (requestCode == GALLERY_REQUEST_CODE) {
             closeImageButton.setVisibility(View.VISIBLE);
