@@ -44,11 +44,14 @@ public class EntryActivity extends AppCompatActivity {
         addImageFAB = findViewById(R.id.galleryFab);
         saveEntryFAB = findViewById(R.id.saveFab);
 
+        //inti datePicker up to Current Date.
         initDatePicker();
         entryDatePicker.setText(getTodayDate());
+        entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
+
+        //Focusing First EditText.
         entryEditTextAbove.requestFocus();
 
-        entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
         addImageFAB.setOnClickListener(v -> getImage());
         closeImageButton.setOnClickListener(v -> closeImage());
 
@@ -67,11 +70,11 @@ public class EntryActivity extends AppCompatActivity {
 
     private void initDatePicker() {
         DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
-
             month = month + 1;
             String date = makeDateString(dayOfMonth, month, year);
             entryDatePicker.setText(date);
         };
+
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
