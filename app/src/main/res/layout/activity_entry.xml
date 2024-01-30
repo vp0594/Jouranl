@@ -18,6 +18,10 @@
             <Button
                 android:id="@+id/entryDatePicker"
                 style="?android:spinnerStyle"
+                android:paddingRight="50dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content" />
 
