@@ -1,21 +1,37 @@
 package com.example.joranl;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 
 public class EntryActivity extends AppCompatActivity {
@@ -28,9 +44,14 @@ public class EntryActivity extends AppCompatActivity {
     private ImageButton closeImageButton;
     private FloatingActionButton addImageFAB;
     private FloatingActionButton saveEntryFAB;
+    private final int PERMISSION_REQUEST_MEDIA_IMAGES = 3;
 
     private final int GALLERY_REQUEST_CODE = 1;
+    private final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 2;
+    private Uri imageUri;
+    private boolean hasPermission = false;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +76,86 @@ public class EntryActivity extends AppCompatActivity {
         addImageFAB.setOnClickListener(v -> getImage());
         closeImageButton.setOnClickListener(v -> closeImage());
 
-
+        saveEntryFAB.setOnClickListener(v -> saveEntry());
     }
+
+    private void saveEntry() {
+        copyImage();
+    }
+
+    private void copyImage() {
+
+        if (imageUri != null && !imageUri.equals(Uri.EMPTY)) {
+            Toast.makeText(this, "yse", Toast.LENGTH_SHORT).show();
+            String imagePath = getImagePath(imageUri);
+            String imageName = getImageName(imageUri);
+
+            try {
+                saveImage(imagePath, imageName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void saveImage(String imagePath, String imageName) throws IOException {
+        FileOutputStream fos = openFileOutput(imageName, MODE_APPEND);
+
+        File file = new File(imagePath);
+
+
+        byte[] bytes = getBytesFromFile(file);
+
+        fos.write(bytes);
+        fos.close();
+    }
+
+    private byte[] getBytesFromFile(File file) throws IOException {
+        byte[] bytes = FileUtils.readFileToByteArray(file);
+        return bytes;
+    }
+
+    private String getImageName(Uri imageUri) {
+        String result = null;
+        if (imageUri.getScheme().equals("content")) {
+            Cursor cursor = getApplicationContext().getContentResolver().query(imageUri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                result = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
+
+            }
+            cursor.close();
+
+        }
+        if (result == null) {
+            result = imageUri.getPath();
+            int c = result.lastIndexOf('/');
+            if (c != -1) {
+                result = result.substring(c + 1);
+            }
+        }
+        return result;
+    }
+
+    private String getImagePath(Uri imageUri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getApplicationContext().getContentResolver().query(imageUri, projection, null, null, null);
+
+        String path = null;
+
+        if (cursor != null) {
+            try {
+                int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                if (cursor.moveToFirst()) {
+                    path = cursor.getString(columnIndex);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+
+        return path;
+    }
+
 
     private String getTodayDate() {
         Calendar calendar = Calendar.getInstance();
@@ -133,6 +232,7 @@ public class EntryActivity extends AppCompatActivity {
 
     private void closeImage() {
         imageView.setImageDrawable(null);
+        imageUri = null;
         closeImageButton.setVisibility(View.GONE);
 
         if (entryEditTextBelow.getText().toString().equals("")) {
@@ -154,10 +254,49 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     private void getImage() {
+
+        if (!hasPermission) {
+            getImagePermission();
+        } else {
+            pickImage();
+        }
+
+    }
+
+    private void pickImage() {
         Intent intentGallery = new Intent(Intent.ACTION_PICK);
         intentGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intentGallery, GALLERY_REQUEST_CODE);
+    }
+
+    private void getImagePermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_EXTERNAL_STORAGE);
+            }
+        }
+        if (ContextCompat.checkSelfPermission(
+                this, android.Manifest.permission.READ_MEDIA_IMAGES
+        ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES}, PERMISSION_REQUEST_MEDIA_IMAGES);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            hasPermission = true;
+            pickImage();
+        }
+        if (requestCode == 3 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            hasPermission = true;
+            pickImage();
+        }
     }
 
     @Override
@@ -165,6 +304,8 @@ public class EntryActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == GALLERY_REQUEST_CODE) {
+
+                imageUri = data.getData();
 
                 closeImageButton.setVisibility(View.VISIBLE);
                 entryEditTextBelow.setVisibility(View.VISIBLE);
