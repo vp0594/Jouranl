@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +25,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -52,6 +54,7 @@ public class EntryActivity extends AppCompatActivity {
     private final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 2;
     private Uri imageUri;
     private boolean hasPermission = false;
+    private String finalImageName = "";
 
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -84,13 +87,13 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private void saveEntry() {
-        copyImage();
+        new SaveEntryAsyncTask().execute();
     }
 
     private void copyImage() {
 
         if (imageUri != null && !imageUri.equals(Uri.EMPTY)) {
-            Toast.makeText(this, "yse", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "yse", Toast.LENGTH_SHORT).show();
             String imagePath = getImagePath(imageUri);
             String imageName = getImageName(imageUri);
 
@@ -102,13 +105,53 @@ public class EntryActivity extends AppCompatActivity {
         }
     }
 
+
+//    private void saveEntry() {
+//        copyImage();
+//
+//        String entryTextAbove;
+//        String entryTextBelow;
+//        String entryText = "";
+//        if (!entryEditTextAbove.getText().toString().equals("")) {
+//            entryTextAbove = entryEditTextAbove.getText().toString().trim();
+//            entryText = entryTextAbove + "\n";
+//        }
+//        if (!entryEditTextBelow.getText().toString().equals("")) {
+//            entryTextBelow = entryEditTextBelow.getText().toString().trim();
+//            entryText = entryText + entryTextBelow;
+//        }
+//
+//        Toast.makeText(this, finalImageName, Toast.LENGTH_SHORT).show();
+//        if (entryText.isEmpty() && finalImageName.isEmpty()) {
+//            Toast.makeText(this, "Entry text cannot be empty", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        CalendarEntry calendarEntry = new CalendarEntry();
+//        calendarEntry.setEntryText(entryText);
+//        calendarEntry.setEntryDate(entryDatePicker.getText().toString());
+//        if (finalImageName.isEmpty()) {
+//            calendarEntry.setImgUri("");
+//        } else {
+//            calendarEntry.setImgUri(finalImageName);
+//        }
+//
+//        AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+//                AppDataBase.class, "CalendarEntry").build();
+//
+//        db.calendarEntryDao().upsertEntry(calendarEntry);
+//        Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
+//    }
+
     private void saveImage(String imagePath, String imageName) throws IOException {
 
         String timeStamp = String.valueOf(System.currentTimeMillis());
         String fileExtension = imageName.substring(imageName.lastIndexOf("."));
-        String newName = "image_" + timeStamp + "." + fileExtension;
+        String newName = "image_" + timeStamp + fileExtension;
 
-        Toast.makeText(this, newName, Toast.LENGTH_SHORT).show();
+        finalImageName = newName;
+
+//        Toast.makeText(this, newName, Toast.LENGTH_SHORT).show();
         FileOutputStream fos = openFileOutput(newName, MODE_APPEND);
         File file = new File(imagePath);
 
@@ -121,6 +164,44 @@ public class EntryActivity extends AppCompatActivity {
 //        byte[] byt = readBytesFromFile(newName);
 //        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 //        imageView.setImageBitmap(bitmap);
+    }
+
+    private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            copyImage();
+
+            String entryTextAbove;
+            String entryTextBelow;
+            String entryText = "";
+            if (!entryEditTextAbove.getText().toString().equals("")) {
+                entryTextAbove = entryEditTextAbove.getText().toString().trim();
+                entryText = entryTextAbove + "\n";
+            }
+            if (!entryEditTextBelow.getText().toString().equals("")) {
+                entryTextBelow = entryEditTextBelow.getText().toString().trim();
+                entryText = entryText + entryTextBelow;
+            }
+
+            if (entryText.isEmpty() && finalImageName.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Entry text cannot be empty", Toast.LENGTH_SHORT).show());
+                return null;
+            }
+
+            CalendarEntry calendarEntry = new CalendarEntry();
+            calendarEntry.setEntryText(entryText);
+            calendarEntry.setEntryDate(entryDatePicker.getText().toString());
+            calendarEntry.setImgUri(finalImageName);
+
+            AppDataBase db = Room.databaseBuilder(getApplicationContext(),
+                    AppDataBase.class, "CalendarEntry").build();
+
+            db.calendarEntryDao().upsertEntry(calendarEntry);
+
+            runOnUiThread(() -> Toast.makeText(EntryActivity.this, "done", Toast.LENGTH_SHORT).show());
+
+            return null;
+        }
     }
 
     private byte[] readBytesFromFile(String name) throws IOException {
