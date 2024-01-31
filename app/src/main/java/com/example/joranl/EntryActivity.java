@@ -93,7 +93,6 @@ public class EntryActivity extends AppCompatActivity {
     private void copyImage() {
 
         if (imageUri != null && !imageUri.equals(Uri.EMPTY)) {
-//            Toast.makeText(this, "yse", Toast.LENGTH_SHORT).show();
             String imagePath = getImagePath(imageUri);
             String imageName = getImageName(imageUri);
 
@@ -106,43 +105,6 @@ public class EntryActivity extends AppCompatActivity {
     }
 
 
-//    private void saveEntry() {
-//        copyImage();
-//
-//        String entryTextAbove;
-//        String entryTextBelow;
-//        String entryText = "";
-//        if (!entryEditTextAbove.getText().toString().equals("")) {
-//            entryTextAbove = entryEditTextAbove.getText().toString().trim();
-//            entryText = entryTextAbove + "\n";
-//        }
-//        if (!entryEditTextBelow.getText().toString().equals("")) {
-//            entryTextBelow = entryEditTextBelow.getText().toString().trim();
-//            entryText = entryText + entryTextBelow;
-//        }
-//
-//        Toast.makeText(this, finalImageName, Toast.LENGTH_SHORT).show();
-//        if (entryText.isEmpty() && finalImageName.isEmpty()) {
-//            Toast.makeText(this, "Entry text cannot be empty", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        CalendarEntry calendarEntry = new CalendarEntry();
-//        calendarEntry.setEntryText(entryText);
-//        calendarEntry.setEntryDate(entryDatePicker.getText().toString());
-//        if (finalImageName.isEmpty()) {
-//            calendarEntry.setImgUri("");
-//        } else {
-//            calendarEntry.setImgUri(finalImageName);
-//        }
-//
-//        AppDataBase db = Room.databaseBuilder(getApplicationContext(),
-//                AppDataBase.class, "CalendarEntry").build();
-//
-//        db.calendarEntryDao().upsertEntry(calendarEntry);
-//        Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
-//    }
-
     private void saveImage(String imagePath, String imageName) throws IOException {
 
         String timeStamp = String.valueOf(System.currentTimeMillis());
@@ -151,7 +113,6 @@ public class EntryActivity extends AppCompatActivity {
 
         finalImageName = newName;
 
-//        Toast.makeText(this, newName, Toast.LENGTH_SHORT).show();
         FileOutputStream fos = openFileOutput(newName, MODE_APPEND);
         File file = new File(imagePath);
 
@@ -160,10 +121,6 @@ public class EntryActivity extends AppCompatActivity {
         fos.write(bytes);
         fos.close();
 
-
-//        byte[] byt = readBytesFromFile(newName);
-//        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//        imageView.setImageBitmap(bitmap);
     }
 
     private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Void> {
