@@ -44,32 +44,31 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         selectedDate = LocalDate.now();
 
 
-        setMonthView();
+        getMonthEntry();
 
         previousMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.minusMonths(1);
-            setMonthView();
+            getMonthEntry();
         });
 
         nextMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.plusMonths(1);
-            setMonthView();
+            getMonthEntry();
         });
         return view;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void getMonthEntry() {
+        monthYearText.setText(monthYearFromDate(selectedDate));
         new GetMonthEntryAsyncTask().execute();
+        setMonthView();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setMonthView() {
 
         //Set Month & Year in TextView
-
-        monthYearText.setText(monthYearFromDate(selectedDate));
-        getMonthEntry();
-
 
         //Making arraylist for storing month's day. Used for display CalendarView.
         ArrayList<String> dayInMonth = dayInMonthArray(selectedDate);
@@ -78,7 +77,6 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
-
 
     }
 
