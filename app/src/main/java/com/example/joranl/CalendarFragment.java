@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -44,42 +43,33 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         nextMonth = view.findViewById(R.id.nextMonth);
         selectedDate = LocalDate.now();
 
-        getMonthEntry();
-
 
         setMonthView();
 
+        previousMonth.setOnClickListener(v -> {
+            selectedDate = selectedDate.minusMonths(1);
+            setMonthView();
+        });
+
+        nextMonth.setOnClickListener(v -> {
+            selectedDate = selectedDate.plusMonths(1);
+            setMonthView();
+        });
         return view;
     }
-    @RequiresApi(api = Build.VERSION_CODES.O)
+
     private void getMonthEntry() {
         new GetMonthEntryAsyncTask().execute();
     }
-
-    private class GetMonthEntryAsyncTask extends AsyncTask<Void, Void, List<CalendarEntry>> {
-
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        protected List<CalendarEntry> doInBackground(Void... voids) {
-            AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").build();
-            String[] strings = monthYearFromDate(selectedDate).split(" ");
-            return db.calendarEntryDao().getMonthEntry(strings[0], strings[1]);
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        protected void onPostExecute(List<CalendarEntry> result) {
-            monthEntry = result;
-            setMonthView();
-        }
-    }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setMonthView() {
 
         //Set Month & Year in TextView
+
         monthYearText.setText(monthYearFromDate(selectedDate));
+        getMonthEntry();
+
 
         //Making arraylist for storing month's day. Used for display CalendarView.
         ArrayList<String> dayInMonth = dayInMonthArray(selectedDate);
@@ -89,17 +79,19 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
 
-        previousMonth.setOnClickListener(v -> {
-            selectedDate = selectedDate.minusMonths(1);
-            getMonthEntry();
-            setMonthView();
-        });
 
-        nextMonth.setOnClickListener(v -> {
-            selectedDate = selectedDate.plusMonths(1);
-            getMonthEntry();
-            setMonthView();
-        });
+    }
+
+    private class GetMonthEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected Void doInBackground(Void... voids) {
+            AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").build();
+            String month = monthYearText.getText().toString();
+            String[] monthYear = month.split(" ");
+            monthEntry = db.calendarEntryDao().getMonthEntry(monthYear[0], monthYear[1]);
+            return null;
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
