@@ -46,21 +46,22 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         holder.dayOfMonth.setText(dayOfMonth.get(position));
+        if (monthEntry != null && !monthEntry.isEmpty()) {
+            for (CalendarEntry entry : monthEntry) {
 
-        for (CalendarEntry entry : monthEntry) {
-
-            String[] s = entry.getEntryDate().split(" ");
-            if (s[1].equals(dayOfMonth.get(position)) && entry.hasImage()) {
-                byte[] byt = new byte[0];
-                try {
-                    byt = readBytesFromFile(entry.getImgUri());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                String[] s = entry.getEntryDate().split(" ");
+                if (s[1].equals(dayOfMonth.get(position)) && entry.hasImage()) {
+                    byte[] byt = new byte[0];
+                    try {
+                        byt = readBytesFromFile(entry.getImgUri());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0, byt.length);
+                    holder.dateBackgroundImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    holder.dateBackgroundImageView.setImageBitmap(bitmap);
+                    break;
                 }
-                Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0, byt.length);
-                holder.dateBackgroundImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                holder.dateBackgroundImageView.setImageBitmap(bitmap);
-                break;
             }
         }
     }

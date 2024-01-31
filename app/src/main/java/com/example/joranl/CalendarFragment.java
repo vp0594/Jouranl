@@ -1,5 +1,6 @@
 package com.example.joranl;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -43,17 +44,36 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         nextMonth = view.findViewById(R.id.nextMonth);
         selectedDate = LocalDate.now();
 
-        AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").allowMainThreadQueries().build();
-
-        String[] strings = monthYearFromDate(selectedDate).split(" ");
-        monthEntry = db.calendarEntryDao().getMonthEntry(strings[0], strings[1]);
-
+        getMonthEntry();
 
 
         setMonthView();
 
         return view;
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void getMonthEntry() {
+        new GetMonthEntryAsyncTask().execute();
+    }
+
+    private class GetMonthEntryAsyncTask extends AsyncTask<Void, Void, List<CalendarEntry>> {
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected List<CalendarEntry> doInBackground(Void... voids) {
+            AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").build();
+            String[] strings = monthYearFromDate(selectedDate).split(" ");
+            return db.calendarEntryDao().getMonthEntry(strings[0], strings[1]);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected void onPostExecute(List<CalendarEntry> result) {
+            monthEntry = result;
+            setMonthView();
+        }
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setMonthView() {
@@ -71,11 +91,13 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
 
         previousMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.minusMonths(1);
+            getMonthEntry();
             setMonthView();
         });
 
         nextMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.plusMonths(1);
+            getMonthEntry();
             setMonthView();
         });
     }
