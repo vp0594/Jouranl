@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -62,7 +63,6 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
     private void getMonthEntry() {
         monthYearText.setText(monthYearFromDate(selectedDate));
         new GetMonthEntryAsyncTask().execute();
-        setMonthView();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -88,8 +88,10 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             String month = monthYearText.getText().toString();
             String[] monthYear = month.split(" ");
             monthEntry = db.calendarEntryDao().getMonthEntry(monthYear[0], monthYear[1]);
+            setMonthView();
             return null;
         }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
