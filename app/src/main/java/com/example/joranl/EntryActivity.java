@@ -76,6 +76,7 @@ public class EntryActivity extends AppCompatActivity {
         //inti datePicker up to Current Date.
         initDatePicker();
         entryDatePicker.setText(getTodayDate());
+
         entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
 
         //Focusing First EditText.
@@ -130,9 +131,8 @@ public class EntryActivity extends AppCompatActivity {
             month = month + 1;
             String date = makeDateString(dayOfMonth, month, year);
             entryDatePicker.setText(date);
-            dateOfEntry = new Date(year, month, dayOfMonth);
+            dateOfEntry = new Date(year, month-1, dayOfMonth);
             dateOfEntryLong = dateOfEntry.getTime();
-            Toast.makeText(this, String.valueOf(dateOfEntryLong), Toast.LENGTH_SHORT).show();
         };
 
         Calendar calendar = Calendar.getInstance();
@@ -215,6 +215,9 @@ public class EntryActivity extends AppCompatActivity {
         int month = calendar.get(Calendar.MONTH);
         month = month + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        Date date = new Date(year, month-1, day);
+        dateOfEntryLong = date.getTime();
 
         return makeDateString(day, month, year);
     }

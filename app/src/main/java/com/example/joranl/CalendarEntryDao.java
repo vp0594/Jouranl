@@ -10,7 +10,7 @@ import java.util.List;
 @Dao
 public interface CalendarEntryDao {
 
-    @Query("SELECT * FROM calendar_entries ORDER BY entryDateLong")
+    @Query("SELECT * FROM calendar_entries ORDER BY entryDateLong DESC")
     List<CalendarEntry> getAllEntriesOrderedByDate();
 
 

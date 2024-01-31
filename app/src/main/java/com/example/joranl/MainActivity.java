@@ -1,9 +1,9 @@
 package com.example.joranl;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
-
-import android.os.Bundle;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -23,6 +23,11 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
 
+
+        setUpTab();
+    }
+
+    private void setUpTab() {
         ArrayList<String> arrayList = new ArrayList<>(0);
 
         arrayList.add("List");
@@ -30,14 +35,19 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(viewPager);
         prepareViewPager(viewPager, arrayList);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+setUpTab();
     }
 
     private void prepareViewPager(ViewPager viewPager, ArrayList<String> arrayList) {
         TabLayoutAdapter adapter = new TabLayoutAdapter(getSupportFragmentManager(), getApplicationContext());
 
-        adapter.addFragment(new ListFragment(),"  List");
-        adapter.addFragment(new CalendarFragment(),"  Calendar");
+        adapter.addFragment(new ListFragment(), "  List");
+        adapter.addFragment(new CalendarFragment(), "  Calendar");
         viewPager.setAdapter(adapter);
     }
 }
