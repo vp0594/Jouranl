@@ -10,8 +10,9 @@ import java.util.List;
 @Dao
 public interface CalendarEntryDao {
 
-    @Query("SELECT * FROM calendar_entries")
-    List<CalendarEntry> getAllEntrires();
+    @Query("SELECT * FROM calendar_entries ORDER BY entryDateLong")
+    List<CalendarEntry> getAllEntriesOrderedByDate();
+
 
     @Query("SELECT * FROM calendar_entries WHERE id= :entryID")
     CalendarEntry getEntryById(long entryID);
@@ -23,7 +24,7 @@ public interface CalendarEntryDao {
     void deleteEntry(CalendarEntry entry);
 
     @Query("SELECT * FROM calendar_entries WHERE entryDate LIKE :startPrefix || '%' || :endSuffix")
-    List<CalendarEntry> getMonthEntry(String startPrefix,String endSuffix);
+    List<CalendarEntry> getMonthEntry(String startPrefix, String endSuffix);
 
 
 }

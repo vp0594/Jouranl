@@ -15,11 +15,22 @@ public class CalendarEntry {
     @ColumnInfo(name = "entryText")
     private String entryText;
 
+    public long getEntryDateLong() {
+        return entryDateLong;
+    }
+
+    public void setEntryDateLong(long entryDateLong) {
+        this.entryDateLong = entryDateLong;
+    }
+
     @ColumnInfo(name = "imgUri")
     private String imgUri;
 
     @ColumnInfo(name = "entryDate")
     private String entryDate;
+
+    @ColumnInfo(name = "entryDateLong")
+    private long entryDateLong;
 
     @ColumnInfo(name = "hasImage")
     private boolean hasImage;

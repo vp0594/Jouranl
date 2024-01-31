@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 
 public class EntryActivity extends AppCompatActivity {
 
@@ -49,12 +50,13 @@ public class EntryActivity extends AppCompatActivity {
     private FloatingActionButton addImageFAB;
     private FloatingActionButton saveEntryFAB;
     private final int PERMISSION_REQUEST_MEDIA_IMAGES = 3;
-
     private final int GALLERY_REQUEST_CODE = 1;
     private final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 2;
     private Uri imageUri;
     private boolean hasPermission = false;
     private String finalImageName = "";
+    private Date dateOfEntry;
+    private long dateOfEntryLong;
 
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -123,45 +125,26 @@ public class EntryActivity extends AppCompatActivity {
 
     }
 
-    private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            copyImage();
+    private void initDatePicker() {
+        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
+            month = month + 1;
+            String date = makeDateString(dayOfMonth, month, year);
+            entryDatePicker.setText(date);
+            dateOfEntry = new Date(year, month, dayOfMonth);
+            dateOfEntryLong = dateOfEntry.getTime();
+            Toast.makeText(this, String.valueOf(dateOfEntryLong), Toast.LENGTH_SHORT).show();
+        };
 
-            String entryTextAbove;
-            String entryTextBelow;
-            String entryText = "";
-            if (!entryEditTextAbove.getText().toString().equals("")) {
-                entryTextAbove = entryEditTextAbove.getText().toString().trim();
-                entryText = entryTextAbove + "\n";
-            }
-            if (!entryEditTextBelow.getText().toString().equals("")) {
-                entryTextBelow = entryEditTextBelow.getText().toString().trim();
-                entryText = entryText + entryTextBelow;
-            }
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            if (entryText.isEmpty() && finalImageName.isEmpty()) {
-                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
-                return null;
-            }
+        int style = AlertDialog.THEME_HOLO_LIGHT;
 
-            CalendarEntry calendarEntry = new CalendarEntry();
-            calendarEntry.setEntryText(entryText);
-            calendarEntry.setEntryDate(entryDatePicker.getText().toString());
-            calendarEntry.setImgUri(finalImageName);
-            if (!finalImageName.isEmpty()) {
-                calendarEntry.setHasImage(true);
-            }
+        datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
-            AppDataBase db = Room.databaseBuilder(getApplicationContext(),
-                    AppDataBase.class, "CalendarEntry").build();
-
-            db.calendarEntryDao().upsertEntry(calendarEntry);
-
-            finish();
-
-            return null;
-        }
     }
 
     private byte[] readBytesFromFile(String name) throws IOException {
@@ -236,22 +219,45 @@ public class EntryActivity extends AppCompatActivity {
         return makeDateString(day, month, year);
     }
 
-    private void initDatePicker() {
-        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
-            month = month + 1;
-            String date = makeDateString(dayOfMonth, month, year);
-            entryDatePicker.setText(date);
-        };
+    private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            copyImage();
 
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+            String entryTextAbove;
+            String entryTextBelow;
+            String entryText = "";
+            if (!entryEditTextAbove.getText().toString().equals("")) {
+                entryTextAbove = entryEditTextAbove.getText().toString().trim();
+                entryText = entryTextAbove + "\n";
+            }
+            if (!entryEditTextBelow.getText().toString().equals("")) {
+                entryTextBelow = entryEditTextBelow.getText().toString().trim();
+                entryText = entryText + entryTextBelow;
+            }
 
-        int style = AlertDialog.THEME_HOLO_LIGHT;
+            if (entryText.isEmpty() && finalImageName.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
+                return null;
+            }
 
-        datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+            CalendarEntry calendarEntry = new CalendarEntry();
+            calendarEntry.setEntryText(entryText);
+            calendarEntry.setEntryDateLong(dateOfEntryLong);
+            calendarEntry.setEntryDate(entryDatePicker.getText().toString());
+            calendarEntry.setImgUri(finalImageName);
+            if (!finalImageName.isEmpty()) {
+                calendarEntry.setHasImage(true);
+            }
+
+            AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
+
+            db.calendarEntryDao().upsertEntry(calendarEntry);
+
+            finish();
+
+            return null;
+        }
     }
 
     private String makeDateString(int dayOfMonth, int month, int year) {

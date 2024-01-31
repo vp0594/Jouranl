@@ -64,7 +64,7 @@ public class ListFragment extends Fragment {
         protected Void doInBackground(Void... voids) {
             AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").build();
 
-            allEntries = db.calendarEntryDao().getAllEntrires();
+            allEntries = db.calendarEntryDao().getAllEntriesOrderedByDate();
             return null;
 
         }
