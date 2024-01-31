@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,8 +39,18 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull EntyViewAdapter.ViewHolder holder, int position) {
+
         holder.entryTextView.setText(allEntries.get(position).getEntryText());
-        holder.entryDateTextView.setText(allEntries.get(position).getEntryDate());
+
+        if (position == 0 || !allEntries.get(position - 1).getEntryDate().equals(allEntries.get(position).getEntryDate())) {
+            // Show date for the first item or if the date is different from the previous entry
+            holder.entryDateTextView.setVisibility(View.VISIBLE);
+            holder.entryDateTextView.setText(allEntries.get(position).getEntryDate());
+        } else {
+            // Hide date if it's the same as the previous entry
+            holder.entryDateTextView.setVisibility(View.GONE);
+        }
+
         if (allEntries.get(position).hasImage()) {
             byte[] bytes;
             try {
@@ -47,7 +58,7 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             holder.entryImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             holder.entryImageView.setImageBitmap(bitmap);
         }
