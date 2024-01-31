@@ -88,10 +88,15 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             String month = monthYearText.getText().toString();
             String[] monthYear = month.split(" ");
             monthEntry = db.calendarEntryDao().getMonthEntry(monthYear[0], monthYear[1]);
-            setMonthView();
             return null;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            setMonthView();
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
