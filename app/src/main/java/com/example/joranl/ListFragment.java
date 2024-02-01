@@ -58,7 +58,7 @@ public class ListFragment extends Fragment {
         EntyViewAdapter entyViewAdapter = new EntyViewAdapter(entryWithBItMaps, getContext());
 //        entyViewAdapter.setHasStableIds(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        entryView.setHasFixedSize(true);
+//        entryView.setHasFixedSize(true);
         entryView.setLayoutManager(layoutManager);
         entryView.setAdapter(entyViewAdapter);
 

@@ -24,9 +24,9 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
     Context context;
 
     public EntyViewAdapter(List<EntryWithBItMap> entryWithBItMaps, Context context) {
+        setHasStableIds(true);
         this.entryWithBItMaps = entryWithBItMaps;
         this.context = context;
-        setHasStableIds(true);
     }
 
     @Override
@@ -57,10 +57,14 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
         }
 
         if(entryWithBItMaps.get(position).getEntry().hasImage()){
+            holder.entryImageView.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(entryWithBItMaps.get(position).getBitmap())
                     .centerCrop()
                     .into(holder.entryImageView);
+        }
+        else {
+            holder.entryImageView.setVisibility(View.GONE);
         }
     }
 

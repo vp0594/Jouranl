@@ -45,9 +45,9 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="10dp"
+                    android:paddingEnd="5dp"
                     android:textColor="@color/white"
-                    android:layout_toStartOf="@+id/imageCardView"
-                    android:text="alkdsla;skfjd\njlsaslaflkjslfals" />
+                    android:layout_toStartOf="@+id/imageCardView"/>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/imageCardView"
@@ -62,9 +62,9 @@
                         android:id="@+id/entryImageView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
+                        android:background="#141118"
                         android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:src="@drawable/img" />
+                        android:layout_alignParentEnd="true" />
                 </androidx.cardview.widget.CardView>
             </RelativeLayout>
         </LinearLayout>
