@@ -53,52 +53,51 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="@style/DayTextStyle"
             android:layout_weight="1"
-            android:textSize="11sp"
-            android:text="SUN"
-            android:textColor="#E3E3E3" />
+            android:text="SUN" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="@style/DayTextStyle"
             android:layout_weight="1"
-            android:text="MON"
-            android:textColor="#E3E3E3" />
+            android:text="MON" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="@style/DayTextStyle"
             android:layout_weight="1"
-            android:text="TUE"
-            android:textColor="@color/cardBackground" />
+            android:text="TUE" />
+
+        <TextView
+            android:layout_width="0dp"
+            style="@style/DayTextStyle"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="WED" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="@style/DayTextStyle"
             android:layout_weight="1"
-            android:text="WED"
-            android:textColor="@color/cardBackground" />
+            android:text="THU" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="@style/DayTextStyle"
             android:layout_weight="1"
-            android:text="THU"
-            android:textColor="@color/cardBackground" />
+            android:text="FRI" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="@style/DayTextStyle"
             android:layout_weight="1"
-            android:text="FRI"
-            android:textColor="@color/cardBackground" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="SAT"
-            android:textColor="@color/cardBackground" />
+            android:text="SAT" />
 
     </LinearLayout>
 
