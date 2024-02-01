@@ -19,7 +19,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:text="Previous"
-            android:textColor="#E91E63"
+            android:textColor="@color/textColor"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -28,6 +28,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/textColor"
             android:background="@android:color/transparent"
             android:text="Hello World!"
             android:textAlignment="center" />
@@ -39,7 +40,7 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:text="Next"
-            android:textColor="#E91E63"
+            android:textColor="@color/textColor"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -53,50 +54,51 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textSize="11sp"
             android:text="SUN"
-            android:textColor="#03A9F4" />
+            android:textColor="#E3E3E3" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="MON"
-            android:textColor="#03A9F4" />
+            android:textColor="#E3E3E3" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="TUE"
-            android:textColor="#03A9F4" />
+            android:textColor="@color/cardBackground" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="WED"
-            android:textColor="#03A9F4" />
+            android:textColor="@color/cardBackground" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="THU"
-            android:textColor="#03A9F4" />
+            android:textColor="@color/cardBackground" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="FRI"
-            android:textColor="#03A9F4" />
+            android:textColor="@color/cardBackground" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="SAT"
-            android:textColor="#03A9F4" />
+            android:textColor="@color/cardBackground" />
 
     </LinearLayout>
 
