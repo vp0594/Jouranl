@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import java.io.FileInputStream;
@@ -23,7 +25,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private final ArrayList<String> dayOfMonth;
     private final OnItemListener onItemListener;
     List<CalendarEntry> monthEntry;
-    private Context context;
+    private final Context context;
 
     public CalendarAdapter(ArrayList<String> dayOfMonth, OnItemListener onItemListener, List<CalendarEntry> monthEntry, Context context) {
         this.dayOfMonth = dayOfMonth;
@@ -43,16 +45,16 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         return new CalendarViewHolder(view, onItemListener);
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options, int w, int h) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
 
-        if (height > h || width > w) {
+        if (height > reqHeight || width > reqWidth) {
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
 
-            while ((halfHeight / inSampleSize) >= h && (halfWidth / inSampleSize) >= w) {
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
             }
         }
@@ -70,27 +72,31 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                 String[] monthYear = entry.getEntryDate().split(" ");
 
                 if (monthYear[1].equals(dayOfMonth.get(position)) && entry.hasImage()) {
-                    byte[] byt;
+                    byte[] bytes;
                     try {
-                        byt = readBytesFromFile(entry.getImgUri());
+                        bytes = readBytesFromFile(entry.getImgUri());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
-                    BitmapFactory.decodeByteArray(byt, 0, byt.length, options);
+                    int desiredWidth = 50; // Set your desired width here
+                    int desiredHeight = 50;
 
-                    int width = 50;
-                    int height = 50;
-
-                    options.inSampleSize = calculateInSampleSize(options, width, height);
+                    options.inSampleSize = calculateInSampleSize(options, desiredWidth, desiredHeight);
                     options.inJustDecodeBounds = false;
 
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0, byt.length, options);
-                    holder.dateBackgroundImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    holder.dateBackgroundImageView.setImageBitmap(bitmap);
+                    Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+//                    holder.dateBackgroundImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+//                    holder.dateBackgroundImageView.setImageBitmap(bitmap);
+
+                    Glide.with(context)
+                            .load(resizedBitmap)
+                            .centerCrop()
+                            .into(holder.dateBackgroundImageView);
 
                     break;
                 }

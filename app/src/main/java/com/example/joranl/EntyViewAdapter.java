@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,6 +27,12 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
     public EntyViewAdapter(List<CalendarEntry> allEntries, Context context) {
         this.allEntries = allEntries;
         this.context = context;
+        setHasStableIds(true);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return allEntries.get(position).getId();
     }
 
     @NonNull
@@ -86,9 +94,10 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
 
             Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
-
-            holder.entryImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            holder.entryImageView.setImageBitmap(resizedBitmap);
+            Glide.with(context)
+                    .load(resizedBitmap)
+                    .centerCrop()
+                    .into(holder.entryImageView);
         }
     }
 

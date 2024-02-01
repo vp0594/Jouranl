@@ -46,16 +46,26 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="10dp"
                     android:textColor="@color/white"
-                    android:layout_toStartOf="@+id/entryImageView"
+                    android:layout_toStartOf="@+id/imageCardView"
                     android:text="alkdsla;skfjd\njlsaslaflkjslfals" />
 
-                <ImageView
-                    android:id="@+id/entryImageView"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/imageCardView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/img" />
+                    app:cardCornerRadius="20dp"
+                    app:cardPreventCornerOverlap="true">
+
+                    <ImageView
+                        android:id="@+id/entryImageView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/img" />
+                </androidx.cardview.widget.CardView>
             </RelativeLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

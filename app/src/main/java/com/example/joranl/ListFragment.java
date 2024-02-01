@@ -50,6 +50,7 @@ public class ListFragment extends Fragment {
     public void setEntriesView() {
 
         EntyViewAdapter entyViewAdapter = new EntyViewAdapter(allEntries, getContext());
+//        entyViewAdapter.setHasStableIds(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         entryView.setLayoutManager(layoutManager);
         entryView.setAdapter(entyViewAdapter);
