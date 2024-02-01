@@ -43,6 +43,23 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         return new CalendarViewHolder(view, onItemListener);
     }
 
+    private static int calculateInSampleSize(BitmapFactory.Options options, int w, int h) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > h || width > w) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= h && (halfWidth / inSampleSize) >= w) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         holder.dayOfMonth.setText(dayOfMonth.get(position));
@@ -59,7 +76,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0, byt.length);
+
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+
+                    BitmapFactory.decodeByteArray(byt, 0, byt.length, options);
+
+                    int width = 50;
+                    int height = 50;
+
+                    options.inSampleSize = calculateInSampleSize(options, width, height);
+                    options.inJustDecodeBounds = false;
+
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0, byt.length, options);
                     holder.dateBackgroundImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     holder.dateBackgroundImageView.setImageBitmap(bitmap);
 

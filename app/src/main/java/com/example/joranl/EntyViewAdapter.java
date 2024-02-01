@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,6 +36,23 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull EntyViewAdapter.ViewHolder holder, int position) {
 
@@ -58,9 +74,21 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+            int desiredWidth = 200; // Set your desired width here
+            int desiredHeight = 200;
+
+            options.inSampleSize = calculateInSampleSize(options, desiredWidth, desiredHeight);
+            options.inJustDecodeBounds = false;
+
+            Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+
             holder.entryImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            holder.entryImageView.setImageBitmap(bitmap);
+            holder.entryImageView.setImageBitmap(resizedBitmap);
         }
     }
 
@@ -71,7 +99,7 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
         byte[] buffer = new byte[1024];
         int bytesRead;
 
-        while ((bytesRead = fileInputStream.read(buffer)) != -1){
+        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
             byteArrayOutputStream.write(buffer,0,bytesRead);
         }
 
