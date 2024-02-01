@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -45,22 +46,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         return new CalendarViewHolder(view, onItemListener);
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
-    }
 
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
@@ -79,22 +64,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                         throw new RuntimeException(e);
                     }
 
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inJustDecodeBounds = true;
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-
-                    int desiredWidth = 50; // Set your desired width here
-                    int desiredHeight = 50;
-
-                    options.inSampleSize = calculateInSampleSize(options, desiredWidth, desiredHeight);
-                    options.inJustDecodeBounds = false;
-
-                    Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-//                    holder.dateBackgroundImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-//                    holder.dateBackgroundImageView.setImageBitmap(bitmap);
-
                     Glide.with(context)
-                            .load(resizedBitmap)
+                            .asBitmap()
+                            .load(bytes)
+                            .apply(RequestOptions.overrideOf(200, 200))
                             .centerCrop()
                             .into(holder.dateBackgroundImageView);
 
