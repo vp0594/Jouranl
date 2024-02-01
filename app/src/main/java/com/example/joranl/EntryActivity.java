@@ -6,6 +6,8 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,8 +32,8 @@ import androidx.room.Room;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,6 +59,7 @@ public class EntryActivity extends AppCompatActivity {
     private String finalImageName = "";
     private Date dateOfEntry;
     private long dateOfEntryLong;
+    private CalendarEntry entry;
 
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -73,25 +76,83 @@ public class EntryActivity extends AppCompatActivity {
         addImageFAB = findViewById(R.id.galleryFab);
         saveEntryFAB = findViewById(R.id.saveFab);
 
+
         //inti datePicker up to Current Date.
         initDatePicker();
-        entryDatePicker.setText(getTodayDate());
+
+        Intent intent = getIntent();
+        int i = intent.getIntExtra("key", 0);
+
+        if (i == 1) {
+
+            long id = intent.getLongExtra("id", -1);
+            AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").allowMainThreadQueries().build();
+
+            entry = db.calendarEntryDao().getEntryById(id);
+
+            entryDatePicker.setText(entry.getEntryDate());
+            if (entry.hasImage()) {
+                byte[] bytes;
+                try {
+                    bytes = readBytesFromFile(entry.getImgUri());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                imageView.setImageBitmap(resizedBitmap);
+            }
+            entryEditTextAbove.setText(entry.getEntryText());
+
+            Toast.makeText(this, entry.getImgUri(), Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            entryDatePicker.setText(getTodayDate());
+
+            //Focusing First EditText.
+            entryEditTextAbove.requestFocus();
+        }
 
         entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
-
-        //Focusing First EditText.
-        entryEditTextAbove.requestFocus();
 
         addImageFAB.setOnClickListener(v -> getImage());
 
         closeImageButton.setOnClickListener(v -> closeImage());
 
-        saveEntryFAB.setOnClickListener(v -> saveEntry());
+        saveEntryFAB.setOnClickListener(v -> {
+            if (i == 1) {
+                updateEntry();
+            } else {
+                saveEntry();
+            }
+        });
+    }
+
+    private void updateEntry() {
+        new UpdateEntryAsyncTask().execute();
+    }
+
+    private byte[] readBytesFromFile(String imgUri) throws IOException {
+        FileInputStream fileInputStream = getApplicationContext().openFileInput(imgUri);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+
+        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer, 0, bytesRead);
+        }
+
+        fileInputStream.close();
+        return byteArrayOutputStream.toByteArray();
     }
 
     private void saveEntry() {
         new SaveEntryAsyncTask().execute();
     }
+
 
     private void copyImage() {
 
@@ -147,26 +208,12 @@ public class EntryActivity extends AppCompatActivity {
 
     }
 
-    private byte[] readBytesFromFile(String name) throws IOException {
-        FileInputStream fis = openFileInput(name);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-
-        while ((bytesRead = fis.read(buffer)) != -1) {
-            bos.write(buffer, 0, bytesRead);
-        }
-
-        fis.close();
-        return bos.toByteArray();
-    }
-
     private byte[] getBytesFromFile(File file) throws IOException {
         return FileUtils.readFileToByteArray(file);
     }
 
     private String getImageName(Uri imageUri) {
+
 
         String result = null;
 
@@ -184,6 +231,7 @@ public class EntryActivity extends AppCompatActivity {
                 result = result.substring(c + 1);
             }
         }
+
         return result;
     }
 
@@ -256,6 +304,56 @@ public class EntryActivity extends AppCompatActivity {
             AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
 
             db.calendarEntryDao().upsertEntry(calendarEntry);
+
+            finish();
+
+            return null;
+        }
+    }
+
+
+    private class UpdateEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            String entryTextAbove;
+            String entryTextBelow;
+            String entryText = "";
+            if (!entryEditTextAbove.getText().toString().equals("")) {
+                entryTextAbove = entryEditTextAbove.getText().toString().trim();
+                entryText = entryTextAbove + "\n";
+            }
+            if (!entryEditTextBelow.getText().toString().equals("")) {
+                entryTextBelow = entryEditTextBelow.getText().toString().trim();
+                entryText = entryText + entryTextBelow;
+            }
+
+            if (entryText.isEmpty() && finalImageName.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
+                return null;
+            }
+
+
+            entry.setEntryText(entryText);
+            if (dateOfEntryLong == 0) {
+                entry.setEntryDateLong(entry.getEntryDateLong());
+            } else {
+                entry.setEntryDateLong(dateOfEntryLong);
+            }
+            entry.setEntryDate(entryDatePicker.getText().toString());
+            if (imageUri != null && !imageUri.equals(entry.getImgUri())) {
+                copyImage();
+                entry.setImgUri(finalImageName);
+                if (!finalImageName.isEmpty()) {
+                    entry.setHasImage(true);
+                }
+            }
+
+
+            AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
+
+            db.calendarEntryDao().upsertEntry(entry);
 
             finish();
 

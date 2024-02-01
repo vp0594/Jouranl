@@ -1,6 +1,7 @@
 package com.example.joranl;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,16 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull EntyViewAdapter.ViewHolder holder, int position) {
         holder.entryTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryText());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,EntryActivity.class);
+                intent.putExtra("key",1);
+                intent.putExtra("id",entryWithBItMaps.get(position).getEntry().getId());
+                context.startActivity(intent);
+            }
+        });
 
         if (position == 0 || !entryWithBItMaps.get(position-1).getEntry().getEntryDate().equals(entryWithBItMaps.get(position).getEntry().getEntryDate())) {
             // Show date for the first item or if the date is different from the previous entry

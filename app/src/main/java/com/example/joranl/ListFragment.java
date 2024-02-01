@@ -49,6 +49,12 @@ public class ListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getEntries();
+    }
+
     private void getEntries() {
         new GetAllEntriesAsyncTask().execute();
     }
@@ -108,7 +114,7 @@ public class ListFragment extends Fragment {
 
             for (CalendarEntry entry : db.calendarEntryDao().getAllEntriesOrderedByDate()) {
                 if (entry.hasImage()) {
-                    byte[] bytes = new byte[0];
+                    byte[] bytes;
                     try {
                         bytes = readBytesFromFile(entry.getImgUri());
                     } catch (IOException e) {
