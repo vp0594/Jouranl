@@ -1,13 +1,13 @@
 package com.example.joranl;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,6 +50,29 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         holder.dayOfMonth.setText(dayOfMonth.get(position));
+
+        holder.itemView.setOnClickListener(v -> {
+
+            if (!(holder.dateBackgroundImageView.getDrawable() == null)) {
+
+                Intent intent = new Intent(context, EntryActivity.class);
+                intent.putExtra("key", 1);
+
+                for (CalendarEntry entry : monthEntry) {
+
+                    String[] monthYear = entry.getEntryDate().split(" ");
+
+                    if (holder.dayOfMonth.getText().toString().equals(monthYear[1])) {
+                        Toast.makeText(context, "ye", Toast.LENGTH_SHORT).show();
+                        intent.putExtra("id", entry.getId());
+                        break;
+                    }
+                }
+
+                context.startActivity(intent);
+
+            }
+        });
 
         if (monthEntry != null && !monthEntry.isEmpty()) {
             for (CalendarEntry entry : monthEntry) {

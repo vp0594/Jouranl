@@ -23,7 +23,8 @@ public interface CalendarEntryDao {
     @Delete
     void deleteEntry(CalendarEntry entry);
 
-    @Query("SELECT * FROM calendar_entries WHERE entryDate LIKE :startPrefix || '%' || :endSuffix")
+
+    @Query("SELECT * FROM calendar_entries WHERE entryDate LIKE :startPrefix || '%' || :endSuffix AND hasImage = 1")
     List<CalendarEntry> getMonthEntry(String startPrefix, String endSuffix);
 
 

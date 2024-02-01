@@ -48,14 +48,11 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
     public void onBindViewHolder(@NonNull EntyViewAdapter.ViewHolder holder, int position) {
         holder.entryTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryText());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context,EntryActivity.class);
-                intent.putExtra("key",1);
-                intent.putExtra("id",entryWithBItMaps.get(position).getEntry().getId());
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context,EntryActivity.class);
+            intent.putExtra("key",1);
+            intent.putExtra("id",entryWithBItMaps.get(position).getEntry().getId());
+            context.startActivity(intent);
         });
 
         if (position == 0 || !entryWithBItMaps.get(position-1).getEntry().getEntryDate().equals(entryWithBItMaps.get(position).getEntry().getEntryDate())) {
