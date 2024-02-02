@@ -51,14 +51,19 @@ public class EntryActivity extends AppCompatActivity {
     private ImageButton closeImageButton, deleteImageButton;
     private FloatingActionButton addImageFAB;
     private FloatingActionButton saveEntryFAB;
+
+
     private final int PERMISSION_REQUEST_MEDIA_IMAGES = 3;
     private final int GALLERY_REQUEST_CODE = 1;
     private final int PERMISSION_REQUEST_EXTERNAL_STORAGE = 2;
-    private Uri imageUri;
     private boolean hasPermission = false;
+
+    private Uri imageUri;
     private String finalImageName = "";
+
     private Date dateOfEntry;
     private long dateOfEntryLong;
+
     private CalendarEntry entry;
 
 
@@ -68,15 +73,7 @@ public class EntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry);
 
-        entryDatePicker = findViewById(R.id.entryDatePicker);
-        entryEditTextAbove = findViewById(R.id.entryEditTextAbove);
-        entryEditTextBelow = findViewById(R.id.entryEditTextBelow);
-        imageView = findViewById(R.id.imageView);
-        closeImageButton = findViewById(R.id.closeImageButton);
-        deleteImageButton = findViewById(R.id.deleteImageButton);
-        addImageFAB = findViewById(R.id.galleryFab);
-        saveEntryFAB = findViewById(R.id.saveFab);
-
+        initUI();
 
         //inti datePicker up to Current Date.
         initDatePicker();
@@ -133,6 +130,17 @@ public class EntryActivity extends AppCompatActivity {
                 saveEntry();
             }
         });
+    }
+
+    private void initUI() {
+        entryDatePicker = findViewById(R.id.entryDatePicker);
+        entryEditTextAbove = findViewById(R.id.entryEditTextAbove);
+        entryEditTextBelow = findViewById(R.id.entryEditTextBelow);
+        imageView = findViewById(R.id.imageView);
+        closeImageButton = findViewById(R.id.closeImageButton);
+        deleteImageButton = findViewById(R.id.deleteImageButton);
+        addImageFAB = findViewById(R.id.galleryFab);
+        saveEntryFAB = findViewById(R.id.saveFab);
     }
 
     private void deleteEntry() {
@@ -467,6 +475,8 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private void pickImage() {
+
+
         Intent intentGallery = new Intent(Intent.ACTION_PICK);
         intentGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intentGallery, GALLERY_REQUEST_CODE);
@@ -508,6 +518,7 @@ public class EntryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+            imageUri = null;
             if (requestCode == GALLERY_REQUEST_CODE) {
 
                 if (data != null && data.getData() != null && isImageFile(data.getData())) {

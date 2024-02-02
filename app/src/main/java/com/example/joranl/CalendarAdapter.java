@@ -24,17 +24,14 @@ import java.util.List;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
     private final ArrayList<String> dayOfMonth;
-    private final OnItemListener onItemListener;
-    List<CalendarEntry> monthEntry;
+    private final List<CalendarEntry> monthEntry;
     private final Context context;
 
-    public CalendarAdapter(ArrayList<String> dayOfMonth, OnItemListener onItemListener, List<CalendarEntry> monthEntry, Context context) {
+    public CalendarAdapter(ArrayList<String> dayOfMonth, List<CalendarEntry> monthEntry, Context context) {
         this.dayOfMonth = dayOfMonth;
-        this.onItemListener = onItemListener;
         this.monthEntry = monthEntry;
         this.context = context;
     }
-
 
     @NonNull
     @Override
@@ -43,9 +40,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         View view = inflater.inflate(R.layout.calendar_cell, parent, false);
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.height = (int) (parent.getHeight() * 0.095);
-        return new CalendarViewHolder(view, onItemListener);
+        return new CalendarViewHolder(view);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
@@ -53,32 +49,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         String currentDay = dayOfMonth.get(position);
         holder.dayOfMonth.setText(currentDay);
 
-        if (dayOfMonth.get(position).equals("   ")){
+        // Hide CardView for empty days
+        if (dayOfMonth.get(position).equals("   ")) {
             holder.cardView.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(v -> {
 
-            if (!(holder.dateBackgroundImageView.getDrawable() == null)) {
-
-                Intent intent = new Intent(context, EntryActivity.class);
-                intent.putExtra("key", 1);
-
-                for (CalendarEntry entry : monthEntry) {
-
-                    String[] monthYear = entry.getEntryDate().split(" ");
-
-                    if (holder.dayOfMonth.getText().toString().equals(monthYear[1])) {
-                        intent.putExtra("id", entry.getId());
-                        break;
-                    }
-                }
-
-                context.startActivity(intent);
-
-            }
-        });
-
+        // Load images for days with entries
         if (monthEntry != null && !monthEntry.isEmpty()) {
             for (CalendarEntry entry : monthEntry) {
 
@@ -102,6 +79,28 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                     break;
                 }
             }
+
+            // Set click listener for each day
+            holder.itemView.setOnClickListener(v -> {
+
+                if (!(holder.dateBackgroundImageView.getDrawable() == null)) {
+                    // Open EntryActivity when a day with an image is clicked
+                    Intent intent = new Intent(context, EntryActivity.class);
+                    intent.putExtra("key", 1);
+
+                    for (CalendarEntry entry : monthEntry) {
+
+                        String[] monthYear = entry.getEntryDate().split(" ");
+
+                        if (holder.dayOfMonth.getText().toString().equals(monthYear[1])) {
+                            intent.putExtra("id", entry.getId());
+                            break;
+                        }
+                    }
+
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 
@@ -125,29 +124,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         return dayOfMonth.size();
     }
 
-    public static class CalendarViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class CalendarViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView dayOfMonth;
         public final ImageView dateBackgroundImageView;
-        private final OnItemListener onItemListener;
         private final CardView cardView;
 
-        public CalendarViewHolder(@NonNull View itemView, OnItemListener onItemListener) {
+        public CalendarViewHolder(@NonNull View itemView) {
             super(itemView);
             dayOfMonth = itemView.findViewById(R.id.cellDayText);
             dateBackgroundImageView = itemView.findViewById(R.id.backgroundImage);
             cardView = itemView.findViewById(R.id.calendarCellCardView);
-            this.onItemListener = onItemListener;
-            itemView.setOnClickListener(this);
         }
-
-        @Override
-        public void onClick(View v) {
-            onItemListener.onItemClick(getAdapterPosition(), (String) dayOfMonth.getText());
-        }
-    }
-
-    public interface OnItemListener {
-        void onItemClick(int position, String dayText);
     }
 }

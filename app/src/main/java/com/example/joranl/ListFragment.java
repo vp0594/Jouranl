@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -24,25 +23,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ListFragment extends Fragment {
-    RecyclerView entryView;
 
-    private FloatingActionButton addEntryFAB;
-    List<EntryWithBItMap> entryWithBItMaps;
-    List<EntryWithBItMap> filteredEntries;
-    EntyViewAdapter entyViewAdapter;
+    private RecyclerView entryView;
+    private List<EntryWithBItMap> entryWithBItMaps;
+    private List<EntryWithBItMap> filteredEntries;
+    private EntyViewAdapter entyViewAdapter;
 
     public ListFragment() {
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        addEntryFAB = view.findViewById(R.id.addEntryFAB);
+        FloatingActionButton addEntryFAB = view.findViewById(R.id.addEntryFAB);
         entryView = view.findViewById(R.id.entryView);
 
         getEntries();
@@ -77,6 +75,24 @@ public class ListFragment extends Fragment {
 
         return view;
     }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
     private void filterEntries(String query) {
         filteredEntries.clear();
 
@@ -96,27 +112,15 @@ public class ListFragment extends Fragment {
         entyViewAdapter.filterList(filteredEntries);
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getEntries();
+    public void setEntriesView() {
+        entyViewAdapter = new EntyViewAdapter(entryWithBItMaps, getContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        entryView.setLayoutManager(layoutManager);
+        entryView.setAdapter(entyViewAdapter);
     }
 
     private void getEntries() {
         new GetAllEntriesAsyncTask().execute();
-    }
-
-    public void setEntriesView() {
-
-        entyViewAdapter = new EntyViewAdapter(entryWithBItMaps, getContext());
-//        entyViewAdapter.setHasStableIds(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-//        entryView.setHasFixedSize(true);
-        entryView.setLayoutManager(layoutManager);
-        entryView.setAdapter(entyViewAdapter);
-
-
     }
 
     private byte[] readBytesFromFile(String imgUri) throws IOException {
@@ -134,29 +138,17 @@ public class ListFragment extends Fragment {
         return byteArrayOutputStream.toByteArray();
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-
-        return inSampleSize;
+    @Override
+    public void onResume() {
+        super.onResume();
+        getEntries();
     }
 
     private class GetAllEntriesAsyncTask extends AsyncTask<Void, Void, Void> {
 
-
         @Override
         protected Void doInBackground(Void... voids) {
-            AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").build();
+            AppDataBase db = Room.databaseBuilder(requireContext(), AppDataBase.class, "CalendarEntry").build();
 
             entryWithBItMaps = new ArrayList<>();
 
@@ -172,10 +164,10 @@ public class ListFragment extends Fragment {
                     options.inJustDecodeBounds = true;
                     BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
 
-                    int desiredWidth = 100; // Set your desired width here
-                    int desiredHeight = 100;
+                    int width = 100;
+                    int height = 100;
 
-                    options.inSampleSize = calculateInSampleSize(options, desiredWidth, desiredHeight);
+                    options.inSampleSize = calculateInSampleSize(options, width, height);
                     options.inJustDecodeBounds = false;
 
                     Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
@@ -195,6 +187,4 @@ public class ListFragment extends Fragment {
             setEntriesView();
         }
     }
-
-
 }

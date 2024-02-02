@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CalendarFragment extends Fragment implements CalendarAdapter.OnItemListener {
+public class CalendarFragment extends Fragment {
 
-    private TextView monthYearText,noOfEntries,noOfEntriesInCurrentMonth;
+    private TextView monthYearText, noOfEntries, noOfEntriesInCurrentMonth;
     private RecyclerView calendarRecyclerView;
     private LocalDate selectedDate;
     private Button previousMonth, nextMonth;
@@ -50,7 +50,19 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         selectedDate = LocalDate.now();
 
         getMonthEntry();
+        setUpListeners();
 
+        return view;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void getMonthEntry() {
+        monthYearText.setText(monthYearFromDate(selectedDate));
+        new GetMonthEntryAsyncTask().execute();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void setUpListeners() {
         previousMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.minusMonths(1);
             getMonthEntry();
@@ -62,28 +74,16 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             getMonthEntry();
             animateRecyclerView(true);
         });
-        return view;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void getMonthEntry() {
-        monthYearText.setText(monthYearFromDate(selectedDate));
-        new GetMonthEntryAsyncTask().execute();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setMonthView() {
-
-        //Set Month & Year in TextView
-
-        //Making arraylist for storing month's day. Used for display CalendarView.
         ArrayList<String> dayInMonth = dayInMonthArray(selectedDate);
 
-        CalendarAdapter calendarAdapter = new CalendarAdapter(dayInMonth, this, monthEntry, getContext());
+        CalendarAdapter calendarAdapter = new CalendarAdapter(dayInMonth, monthEntry, getContext());
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
         calendarRecyclerView.setLayoutManager(layoutManager);
         calendarRecyclerView.setAdapter(calendarAdapter);
-
     }
 
     private class GetMonthEntryAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -96,6 +96,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             AppDataBase db = Room.databaseBuilder(getContext(), AppDataBase.class, "CalendarEntry").build();
             String month = monthYearText.getText().toString();
             String[] monthYear = month.split(" ");
+
             monthEntry = db.calendarEntryDao().getMonthEntry(monthYear[0], monthYear[1]);
 
             totalEntry = db.calendarEntryDao().getTotalEntryCount();
@@ -108,9 +109,8 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         @Override
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
-            setMonthView();
 
-            // Update UI elements in the onPostExecute method
+            setMonthView();
             noOfEntries.setText(String.valueOf(totalEntry));
             noOfEntriesInCurrentMonth.setText(String.valueOf(totalEntryInMonth));
         }
@@ -179,7 +179,7 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
                 } else {
                     openingAnimator = ObjectAnimator.ofFloat(calendarRecyclerView, "translationX", -calendarRecyclerView.getWidth(), 0);
                 }
-                openingAnimator.setDuration(400); // Set the duration of the opening animation
+                openingAnimator.setDuration(500); // Set the duration of the opening animation
                 openingAnimator.start();
             }
         });
@@ -187,9 +187,4 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         animator.start();
     }
 
-
-    @Override
-    public void onItemClick(int position, String dayText) {
-
-    }
 }
