@@ -334,6 +334,7 @@ public class EntryActivity extends AppCompatActivity {
             }
             if (!entryEditTextBelow.getText().toString().equals("")) {
                 entryTextBelow = entryEditTextBelow.getText().toString().trim();
+                // TODO - make sure editText Below stay in Below textView
                 entryText = entryText + entryTextBelow;
             }
 
