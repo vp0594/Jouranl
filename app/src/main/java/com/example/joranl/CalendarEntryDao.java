@@ -13,6 +13,11 @@ public interface CalendarEntryDao {
     @Query("SELECT * FROM calendar_entries ORDER BY entryDateLong DESC")
     List<CalendarEntry> getAllEntriesOrderedByDate();
 
+    @Query("SELECT COUNT(*) FROM calendar_entries")
+    int getTotalEntryCount();
+
+    @Query("SELECT COUNT(*) FROM calendar_entries WHERE entryDate LIKE :startPrefix || '%' || :endSuffix")
+    int getCurrentMonthEntryCount(String startPrefix,String endSuffix);
 
     @Query("SELECT * FROM calendar_entries WHERE id= :entryID")
     CalendarEntry getEntryById(long entryID);

@@ -21,10 +21,11 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CalendarFragment extends Fragment implements CalendarAdapter.OnItemListener {
 
-    private TextView monthYearText;
+    private TextView monthYearText,noOfEntries,noOfEntriesInCurrentMonth;
     private RecyclerView calendarRecyclerView;
     private LocalDate selectedDate;
     private Button previousMonth, nextMonth;
@@ -39,11 +40,12 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
         monthYearText = view.findViewById(R.id.monthYearTV);
+        noOfEntries = view.findViewById(R.id.noOfEntries);
+        noOfEntriesInCurrentMonth = view.findViewById(R.id.noOfEntriesInCurrentMonth);
         calendarRecyclerView = view.findViewById(R.id.calendarRecyclerView);
         previousMonth = view.findViewById(R.id.previousMonth);
         nextMonth = view.findViewById(R.id.nextMonth);
         selectedDate = LocalDate.now();
-
 
         getMonthEntry();
 
@@ -81,6 +83,9 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
     }
 
     private class GetMonthEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        private int totalEntry;
+        private int totalEntryInMonth;
+
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected Void doInBackground(Void... voids) {
@@ -88,6 +93,10 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
             String month = monthYearText.getText().toString();
             String[] monthYear = month.split(" ");
             monthEntry = db.calendarEntryDao().getMonthEntry(monthYear[0], monthYear[1]);
+
+            totalEntry = db.calendarEntryDao().getTotalEntryCount();
+            totalEntryInMonth = db.calendarEntryDao().getCurrentMonthEntryCount(monthYear[0], monthYear[1]);
+
             return null;
         }
 
@@ -96,6 +105,10 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         protected void onPostExecute(Void unused) {
             super.onPostExecute(unused);
             setMonthView();
+
+            // Update UI elements in the onPostExecute method
+            noOfEntries.setText(String.valueOf(totalEntry));
+            noOfEntriesInCurrentMonth.setText(String.valueOf(totalEntryInMonth));
         }
     }
 
@@ -122,6 +135,10 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
                 stringArrayList.add(String.valueOf(dayValue));
             }
 
+        }
+
+        if(Objects.equals(stringArrayList.get(0), "   ") && Objects.equals(stringArrayList.get(6), "   ") ){
+            stringArrayList.subList(0,6).clear();
         }
 
         return stringArrayList;

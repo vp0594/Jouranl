@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -42,14 +42,20 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.calendar_cell, parent, false);
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        layoutParams.height = (int) (parent.getHeight() * 0.085);
+        layoutParams.height = (int) (parent.getHeight() * 0.095);
         return new CalendarViewHolder(view, onItemListener);
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
-        holder.dayOfMonth.setText(dayOfMonth.get(position));
+        holder.cardView.setVisibility(View.VISIBLE);
+        String currentDay = dayOfMonth.get(position);
+        holder.dayOfMonth.setText(currentDay);
+
+        if (dayOfMonth.get(position).equals("   ")){
+            holder.cardView.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnClickListener(v -> {
 
@@ -124,11 +130,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         public final TextView dayOfMonth;
         public final ImageView dateBackgroundImageView;
         private final OnItemListener onItemListener;
+        private final CardView cardView;
 
         public CalendarViewHolder(@NonNull View itemView, OnItemListener onItemListener) {
             super(itemView);
             dayOfMonth = itemView.findViewById(R.id.cellDayText);
-            dateBackgroundImageView=itemView.findViewById(R.id.backgroundImage);
+            dateBackgroundImageView = itemView.findViewById(R.id.backgroundImage);
+            cardView = itemView.findViewById(R.id.calendarCellCardView);
             this.onItemListener = onItemListener;
             itemView.setOnClickListener(this);
         }
