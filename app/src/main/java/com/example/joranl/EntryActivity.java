@@ -101,6 +101,7 @@ public class EntryActivity extends AppCompatActivity {
 
                 Bitmap resizedBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
+                closeImageButton.setVisibility(View.VISIBLE);
                 imageView.setImageBitmap(resizedBitmap);
             }
             entryEditTextAbove.setText(entry.getEntryText());
@@ -348,6 +349,9 @@ public class EntryActivity extends AppCompatActivity {
                 if (!finalImageName.isEmpty()) {
                     entry.setHasImage(true);
                 }
+            }else {
+                entry.setHasImage(false);
+                entry.setImgUri("");
             }
 
 
