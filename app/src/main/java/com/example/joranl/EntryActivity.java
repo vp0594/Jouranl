@@ -346,11 +346,6 @@ public class EntryActivity extends AppCompatActivity {
                 entryText = entryText + entryTextBelow;
             }
 
-            if (entryText.isEmpty() && finalImageName.isEmpty()) {
-                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
-                return null;
-            }
-
 
             entry.setEntryText(entryText);
             if (dateOfEntryLong == 0) {
@@ -359,18 +354,24 @@ public class EntryActivity extends AppCompatActivity {
                 entry.setEntryDateLong(dateOfEntryLong);
             }
             entry.setEntryDate(entryDatePicker.getText().toString());
-            if (imageUri != null && !imageUri.equals(entry.getImgUri())) {
+
+
+            if(imageUri != null){
                 copyImage();
                 entry.setImgUri(finalImageName);
-                if (!finalImageName.isEmpty()) {
-                    entry.setHasImage(true);
-                }
-            }else {
+                entry.setHasImage(true);
+            }
+
+            if (imageView.getDrawable() == null){
                 entry.setHasImage(false);
                 entry.setImgUri("");
             }
 
 
+            if (entryText.isEmpty() && entry.getImgUri().isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
+                return null;
+            }
             AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
 
             db.calendarEntryDao().upsertEntry(entry);
