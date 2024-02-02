@@ -48,7 +48,7 @@ public class EntryActivity extends AppCompatActivity {
     private DatePickerDialog datePickerDialog;
     private EditText entryEditTextAbove, entryEditTextBelow;
     private ImageView imageView;
-    private ImageButton closeImageButton;
+    private ImageButton closeImageButton, deleteImageButton;
     private FloatingActionButton addImageFAB;
     private FloatingActionButton saveEntryFAB;
     private final int PERMISSION_REQUEST_MEDIA_IMAGES = 3;
@@ -73,6 +73,7 @@ public class EntryActivity extends AppCompatActivity {
         entryEditTextBelow = findViewById(R.id.entryEditTextBelow);
         imageView = findViewById(R.id.imageView);
         closeImageButton = findViewById(R.id.closeImageButton);
+        deleteImageButton = findViewById(R.id.deleteImageButton);
         addImageFAB = findViewById(R.id.galleryFab);
         saveEntryFAB = findViewById(R.id.saveFab);
 
@@ -84,6 +85,8 @@ public class EntryActivity extends AppCompatActivity {
         int i = intent.getIntExtra("key", 0);
 
         if (i == 1) {
+
+            deleteImageButton.setVisibility(View.VISIBLE);
 
             long id = intent.getLongExtra("id", -1);
             AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").allowMainThreadQueries().build();
@@ -115,6 +118,8 @@ public class EntryActivity extends AppCompatActivity {
             entryEditTextAbove.requestFocus();
         }
 
+        deleteImageButton.setOnClickListener(v -> deleteEntry());
+
         entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
 
         addImageFAB.setOnClickListener(v -> getImage());
@@ -128,6 +133,10 @@ public class EntryActivity extends AppCompatActivity {
                 saveEntry();
             }
         });
+    }
+
+    private void deleteEntry() {
+        new DeleteEntryAsyncTask().execute();
     }
 
     private void updateEntry() {
@@ -357,6 +366,21 @@ public class EntryActivity extends AppCompatActivity {
             AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
 
             db.calendarEntryDao().upsertEntry(entry);
+
+            finish();
+
+            return null;
+        }
+    }
+
+
+    private class DeleteEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
+
+            db.calendarEntryDao().deleteEntry(entry);
 
             finish();
 
