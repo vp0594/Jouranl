@@ -30,6 +30,14 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
         this.context = context;
     }
 
+    public void filterList(List<EntryWithBItMap> filterlist) {
+        // Update the original list with the filtered list
+        entryWithBItMaps = filterlist;
+        // Notify the adapter that the data set has changed
+        notifyDataSetChanged();
+    }
+
+
     @Override
     public long getItemId(int position) {
         return entryWithBItMaps.get(position).getEntry().getId();

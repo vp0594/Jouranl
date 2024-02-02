@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +30,8 @@ public class ListFragment extends Fragment {
 
     private FloatingActionButton addEntryFAB;
     List<EntryWithBItMap> entryWithBItMaps;
-
+    List<EntryWithBItMap> filteredEntries;
+    EntyViewAdapter entyViewAdapter;
 
     public ListFragment() {
     }
@@ -45,9 +48,43 @@ public class ListFragment extends Fragment {
 
         addEntryFAB.setOnClickListener(v -> startActivity(new Intent(getActivity(), EntryActivity.class)));
 
+        SearchView searchView = view.findViewById(R.id.search_bar);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filteredEntries = new ArrayList<>();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filteredEntries = new ArrayList<>();
+                filterEntries(newText);
+                return false;
+            }
+        });
 
         return view;
     }
+    private void filterEntries(String query) {
+        filteredEntries.clear();
+
+        // If the query is empty, show all entries
+        if (query.isEmpty()) {
+            filteredEntries.addAll(entryWithBItMaps);
+        } else {
+            // Otherwise, filter entries based on the query
+            for (EntryWithBItMap entry : entryWithBItMaps) {
+                if (entry.getEntry().getEntryDate().toLowerCase().contains(query.toLowerCase())) {
+                    filteredEntries.add(entry);
+                }
+            }
+        }
+
+        // Update the adapter with the filtered entries
+        entyViewAdapter.filterList(filteredEntries);
+    }
+
 
     @Override
     public void onResume() {
@@ -61,7 +98,7 @@ public class ListFragment extends Fragment {
 
     public void setEntriesView() {
 
-        EntyViewAdapter entyViewAdapter = new EntyViewAdapter(entryWithBItMaps, getContext());
+        entyViewAdapter = new EntyViewAdapter(entryWithBItMaps, getContext());
 //        entyViewAdapter.setHasStableIds(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 //        entryView.setHasFixedSize(true);
