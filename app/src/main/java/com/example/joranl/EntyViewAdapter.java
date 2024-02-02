@@ -12,11 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHolder> {
@@ -54,16 +50,23 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull EntyViewAdapter.ViewHolder holder, int position) {
-        holder.entryTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryText());
+
+        if (entryWithBItMaps.get(position).getEntry().getEntryText().contains("@@@")) {
+            String temp = entryWithBItMaps.get(position).getEntry().getEntryText().replace("@@@","\n");
+            holder.entryTextView.setText(temp);
+        } else {
+            holder.entryTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryText());
+        }
+
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context,EntryActivity.class);
-            intent.putExtra("key",1);
-            intent.putExtra("id",entryWithBItMaps.get(position).getEntry().getId());
+            Intent intent = new Intent(context, EntryActivity.class);
+            intent.putExtra("key", 1);
+            intent.putExtra("id", entryWithBItMaps.get(position).getEntry().getId());
             context.startActivity(intent);
         });
 
-        if (position == 0 || !entryWithBItMaps.get(position-1).getEntry().getEntryDate().equals(entryWithBItMaps.get(position).getEntry().getEntryDate())) {
+        if (position == 0 || !entryWithBItMaps.get(position - 1).getEntry().getEntryDate().equals(entryWithBItMaps.get(position).getEntry().getEntryDate())) {
             // Show date for the first item or if the date is different from the previous entry
             holder.entryDateTextView.setVisibility(View.VISIBLE);
             holder.entryDateTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryDate());

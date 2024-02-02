@@ -104,7 +104,25 @@ public class EntryActivity extends AppCompatActivity {
                 closeImageButton.setVisibility(View.VISIBLE);
                 imageView.setImageBitmap(resizedBitmap);
             }
-            entryEditTextAbove.setText(entry.getEntryText());
+
+            if (entry.getEntryText().contains("@@@")) {
+                String[] text = entry.getEntryText().split("@@@");
+
+                if (text.length > 0 && !text[0].isEmpty()) {
+                    entryEditTextAbove.setText(text[0]);
+                }
+                if (text.length > 1 && !text[1].isEmpty()) {
+                    entryEditTextBelow.setVisibility(View.VISIBLE);
+                    entryEditTextBelow.setText(text[1]);
+                }
+
+            } else {
+                entryEditTextAbove.setText(entry.getEntryText());
+                if (entry.hasImage()) {
+                    entryEditTextBelow.setVisibility(View.VISIBLE);
+                    entryEditTextBelow.requestFocus();
+                }
+            }
 
 
         } else {
@@ -281,51 +299,24 @@ public class EntryActivity extends AppCompatActivity {
         month = month + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        Date date = new Date(year, month-1, day);
+        Date date = new Date(year, month - 1, day);
         dateOfEntryLong = date.getTime();
 
         return makeDateString(day, month, year);
     }
 
-    private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            copyImage();
+    private void closeImage() {
+        imageView.setImageDrawable(null);
+        imageUri = null;
+        closeImageButton.setVisibility(View.GONE);
 
-            String entryTextAbove;
-            String entryTextBelow;
-            String entryText = "";
-            if (!entryEditTextAbove.getText().toString().equals("")) {
-                entryTextAbove = entryEditTextAbove.getText().toString().trim();
-                entryText = entryTextAbove + "\n";
-            }
-            if (!entryEditTextBelow.getText().toString().equals("")) {
-                entryTextBelow = entryEditTextBelow.getText().toString().trim();
-                entryText = entryText + entryTextBelow;
-            }
+        String entryBelow = entryEditTextBelow.getText().toString();
+        String entryAbove = entryEditTextAbove.getText().toString();
 
-            if (entryText.isEmpty() && finalImageName.isEmpty()) {
-                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
-                return null;
-            }
+        entryEditTextAbove.setText(entryAbove + entryBelow);
 
-            CalendarEntry calendarEntry = new CalendarEntry();
-            calendarEntry.setEntryText(entryText);
-            calendarEntry.setEntryDateLong(dateOfEntryLong);
-            calendarEntry.setEntryDate(entryDatePicker.getText().toString());
-            calendarEntry.setImgUri(finalImageName);
-            if (!finalImageName.isEmpty()) {
-                calendarEntry.setHasImage(true);
-            }
-
-            AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
-
-            db.calendarEntryDao().upsertEntry(calendarEntry);
-
-            finish();
-
-            return null;
-        }
+        entryEditTextBelow.setText("");
+        entryEditTextBelow.setVisibility(View.GONE);
     }
 
 
@@ -339,13 +330,17 @@ public class EntryActivity extends AppCompatActivity {
             String entryText = "";
             if (!entryEditTextAbove.getText().toString().equals("")) {
                 entryTextAbove = entryEditTextAbove.getText().toString().trim();
-                entryText = entryTextAbove + "\n";
+                entryText = entryTextAbove + "@@@";
             }
             if (!entryEditTextBelow.getText().toString().equals("")) {
                 entryTextBelow = entryEditTextBelow.getText().toString().trim();
                 entryText = entryText + entryTextBelow;
             }
 
+
+            if (entryText.endsWith("@@@")) {
+                entryText = entryText.substring(0, entryText.length() - 3);
+            }
 
             entry.setEntryText(entryText);
             if (dateOfEntryLong == 0) {
@@ -442,27 +437,48 @@ public class EntryActivity extends AppCompatActivity {
         return "Jan";
     }
 
-    private void closeImage() {
-        imageView.setImageDrawable(null);
-        imageUri = null;
-        closeImageButton.setVisibility(View.GONE);
+    private class SaveEntryAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            copyImage();
 
-        if (entryEditTextBelow.getText().toString().equals("")) {
-            entryEditTextBelow.setVisibility(View.GONE);
-            entryEditTextAbove.setVisibility(View.VISIBLE);
-            entryEditTextAbove.requestFocus();
-        } else {
-            String temp;
-            if (entryEditTextAbove.getText().toString().equals("")) {
-                temp = entryEditTextBelow.getText().toString();
-            } else {
-                temp = entryEditTextAbove.getText().toString() + "\n\n" + entryEditTextBelow.getText().toString();
+            String entryTextAbove;
+            String entryTextBelow;
+            String entryText = "";
+            if (!entryEditTextAbove.getText().toString().equals("")) {
+                entryTextAbove = entryEditTextAbove.getText().toString().trim();
+                entryText = entryTextAbove + "@@@";
             }
-            entryEditTextAbove.setVisibility(View.VISIBLE);
-            entryEditTextAbove.setText(temp);
-            entryEditTextBelow.setVisibility(View.GONE);
-            entryEditTextAbove.requestFocus();
-            entryEditTextAbove.setSelection(entryEditTextAbove.getText().length());
+            if (!entryEditTextBelow.getText().toString().equals("")) {
+                entryTextBelow = entryEditTextBelow.getText().toString().trim();
+                entryText = entryText + entryTextBelow;
+            }
+
+
+            if (entryText.endsWith("@@@")) {
+                entryText = entryText.substring(0, entryText.length() - 3);
+            }
+
+            if (entryText.isEmpty() && finalImageName.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(EntryActivity.this, "Can not Save Empty Entry", Toast.LENGTH_SHORT).show());
+                return null;
+            }
+            CalendarEntry calendarEntry = new CalendarEntry();
+            calendarEntry.setEntryText(entryText);
+            calendarEntry.setEntryDateLong(dateOfEntryLong);
+            calendarEntry.setEntryDate(entryDatePicker.getText().toString());
+            calendarEntry.setImgUri(finalImageName);
+            if (!finalImageName.isEmpty()) {
+                calendarEntry.setHasImage(true);
+            }
+
+            AppDataBase db = Room.databaseBuilder(getApplicationContext(), AppDataBase.class, "CalendarEntry").build();
+
+            db.calendarEntryDao().upsertEntry(calendarEntry);
+
+            finish();
+
+            return null;
         }
     }
 
