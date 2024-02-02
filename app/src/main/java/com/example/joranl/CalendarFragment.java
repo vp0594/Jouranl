@@ -1,5 +1,8 @@
 package com.example.joranl;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
@@ -52,11 +54,13 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
         previousMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.minusMonths(1);
             getMonthEntry();
+            animateRecyclerView(false);
         });
 
         nextMonth.setOnClickListener(v -> {
             selectedDate = selectedDate.plusMonths(1);
             getMonthEntry();
+            animateRecyclerView(true);
         });
         return view;
     }
@@ -149,6 +153,38 @@ public class CalendarFragment extends Fragment implements CalendarAdapter.OnItem
     private String monthYearFromDate(LocalDate date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yyyy");
         return date.format(formatter);
+    }
+
+    private void animateRecyclerView(boolean isNext) {
+        ObjectAnimator animator;
+        if (isNext) {
+            // Closing animation for the current month (slide to the left)
+            animator = ObjectAnimator.ofFloat(calendarRecyclerView, "translationX", 0, -calendarRecyclerView.getWidth());
+        } else {
+            // Closing animation for the current month (slide to the right)
+            animator = ObjectAnimator.ofFloat(calendarRecyclerView, "translationX", 0, calendarRecyclerView.getWidth());
+        }
+        animator.setDuration(700); // Set the duration of the closing animation
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Reset translationX after closing animation ends
+                calendarRecyclerView.setTranslationX(0);
+
+                // Perform the opening animation for the next/previous month
+                ObjectAnimator openingAnimator;
+                if (isNext) {
+                    openingAnimator = ObjectAnimator.ofFloat(calendarRecyclerView, "translationX", calendarRecyclerView.getWidth(), 0);
+                } else {
+                    openingAnimator = ObjectAnimator.ofFloat(calendarRecyclerView, "translationX", -calendarRecyclerView.getWidth(), 0);
+                }
+                openingAnimator.setDuration(400); // Set the duration of the opening animation
+                openingAnimator.start();
+            }
+        });
+
+        animator.start();
     }
 
 
