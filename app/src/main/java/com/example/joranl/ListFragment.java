@@ -51,13 +51,10 @@ public class ListFragment extends Fragment {
         CardView cardView = view.findViewById(R.id.cardView);
 
         // Set an OnClickListener on the CardView
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // When CardView is clicked, open the SearchView and show the keyboard
-                SearchView searchView = view.findViewById(R.id.search_bar);
-                searchView.setIconified(false);
-            }
+        cardView.setOnClickListener(v -> {
+            // When CardView is clicked, open the SearchView and show the keyboard
+            SearchView searchView = view.findViewById(R.id.search_bar);
+            searchView.setIconified(false);
         });
 
         SearchView searchView = view.findViewById(R.id.search_bar);
@@ -71,7 +68,9 @@ public class ListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 filteredEntries = new ArrayList<>();
-                filterEntries(newText);
+                if (entyViewAdapter != null) {
+                    filterEntries(newText);
+                }
                 return false;
             }
         });

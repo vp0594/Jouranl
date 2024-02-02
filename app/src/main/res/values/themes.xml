@@ -1,10 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Joranl" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorSurface">@color/background</item>
     </style>
 
-    <style name="Theme.Joranl" parent="Base.Theme.Joranl" />
 </resources>

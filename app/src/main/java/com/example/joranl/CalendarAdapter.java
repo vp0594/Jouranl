@@ -63,7 +63,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
                     String[] monthYear = entry.getEntryDate().split(" ");
 
                     if (holder.dayOfMonth.getText().toString().equals(monthYear[1])) {
-                        Toast.makeText(context, "ye", Toast.LENGTH_SHORT).show();
                         intent.putExtra("id", entry.getId());
                         break;
                     }

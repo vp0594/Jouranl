@@ -20,7 +20,7 @@
                 android:id="@+id/entryDatePicker"
                 style="?android:spinnerStyle"
                 android:paddingRight="50dp"
-                android:textColor="@color/white"
+                android:textColor="@color/textColor"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_height="wrap_content"

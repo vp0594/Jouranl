@@ -3,5 +3,5 @@
     <color name="textColor">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="background">#FF000000</color>
-    <color name="cardBackground">#141118</color>
+    <color name="lightBackground">#141118</color>
 </resources>
