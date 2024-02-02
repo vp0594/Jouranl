@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +48,17 @@ public class ListFragment extends Fragment {
         getEntries();
 
         addEntryFAB.setOnClickListener(v -> startActivity(new Intent(getActivity(), EntryActivity.class)));
+        CardView cardView = view.findViewById(R.id.cardView);
+
+        // Set an OnClickListener on the CardView
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // When CardView is clicked, open the SearchView and show the keyboard
+                SearchView searchView = view.findViewById(R.id.search_bar);
+                searchView.setIconified(false);
+            }
+        });
 
         SearchView searchView = view.findViewById(R.id.search_bar);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

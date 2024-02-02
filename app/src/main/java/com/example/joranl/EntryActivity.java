@@ -106,7 +106,6 @@ public class EntryActivity extends AppCompatActivity {
             }
             entryEditTextAbove.setText(entry.getEntryText());
 
-            Toast.makeText(this, entry.getImgUri(), Toast.LENGTH_SHORT).show();
 
         } else {
 
@@ -487,18 +486,29 @@ public class EntryActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == GALLERY_REQUEST_CODE) {
 
-                imageUri = data.getData();
+                if (data != null && data.getData() != null && isImageFile(data.getData())) {
 
-                closeImageButton.setVisibility(View.VISIBLE);
-                entryEditTextBelow.setVisibility(View.VISIBLE);
+                    imageUri = data.getData();
 
-                if (entryEditTextAbove.getText().toString().equals("")) {
-                    entryEditTextAbove.setVisibility(View.GONE);
+                    closeImageButton.setVisibility(View.VISIBLE);
+                    entryEditTextBelow.setVisibility(View.VISIBLE);
+
+                    if (entryEditTextAbove.getText().toString().equals("")) {
+                        entryEditTextAbove.setVisibility(View.GONE);
+                    }
+
+                    entryEditTextBelow.requestFocus();
+                    imageView.setImageURI(data.getData());
                 }
-
-                entryEditTextBelow.requestFocus();
-                imageView.setImageURI(data.getData());
+                else {
+                    // Handle the case where the selected content is not an image
+                    Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+                }
             }
         }
+    }
+    private boolean isImageFile(Uri uri) {
+        String mimeType = getContentResolver().getType(uri);
+        return mimeType != null && mimeType.startsWith("image");
     }
 }
