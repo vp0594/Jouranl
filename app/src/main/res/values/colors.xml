@@ -5,6 +5,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="textColor">#FF000000</color>
     <color name="background">#f7f7f7</color>
-    <color name="floatBackground">#81689D</color>
+    <color name="floatBackground">#673AB7</color>
     <color name="lightBackground">#FFFFFF</color>
 </resources>

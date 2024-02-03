@@ -3,7 +3,7 @@
     <color name="textColor">#ffffff</color>
     <color name="textColor2">#81689D</color>
     <color name="black">#FF000000</color>
-    <color name="background">#1F2544</color>
-    <color name="floatBackground">#009688</color>
-    <color name="lightBackground">#474F7A</color>
+    <color name="background">#FF000000</color>
+    <color name="lightBackground">#141118</color>
+    <color name="floatBackground">#673AB7</color>
 </resources>

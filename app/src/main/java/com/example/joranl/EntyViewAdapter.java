@@ -62,6 +62,12 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
             holder.entryTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryText());
         }
 
+        holder.entryImageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ViewImage.class);
+            intent.putExtra("id", entryWithBItMaps.get(position).getEntry().getId());
+            context.startActivity(intent);
+        });
+
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, EntryActivity.class);
