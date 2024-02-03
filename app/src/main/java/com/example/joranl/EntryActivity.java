@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -74,9 +75,6 @@ public class EntryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_entry);
 
         initUI();
-
-        //inti datePicker up to Current Date.
-        initDatePicker();
 
         Intent intent = getIntent();
         int i = intent.getIntExtra("key", 0);
@@ -140,7 +138,7 @@ public class EntryActivity extends AppCompatActivity {
 
         deleteImageButton.setOnClickListener(v -> deleteEntry());
 
-        entryDatePicker.setOnClickListener(v -> datePickerDialog.show());
+        entryDatePicker.setOnClickListener(v -> openDatePicker());
 
         addImageFAB.setOnClickListener(v -> getImage());
 
@@ -153,6 +151,41 @@ public class EntryActivity extends AppCompatActivity {
                 saveEntry();
             }
         });
+    }
+
+    private void openDatePicker() {
+        View dialogView = getLayoutInflater().inflate(R.layout.date_picker, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        DatePicker datePicker = dialogView.findViewById(R.id.datePicker);
+        Button noButton = dialogView.findViewById(R.id.noButton);
+        Button yesButton = dialogView.findViewById(R.id.yesButton);
+
+        datePicker.setMaxDate(System.currentTimeMillis());
+
+        AlertDialog dateDialog = builder.create();
+
+
+        yesButton.setOnClickListener(v -> {
+
+            int dayOfMonth = datePicker.getDayOfMonth();
+            int month = datePicker.getMonth();
+            month = month + 1;
+            int year = datePicker.getYear();
+
+            String date = makeDateString(dayOfMonth, month, year);
+            entryDatePicker.setText(date);
+            dateOfEntry = new Date(year, month - 1, dayOfMonth);
+            dateOfEntryLong = dateOfEntry.getTime();
+            dateDialog.dismiss();
+        });
+
+        noButton.setOnClickListener(v -> dateDialog.dismiss());
+
+        dateDialog.show();
+
     }
 
     private void initUI() {
@@ -224,27 +257,6 @@ public class EntryActivity extends AppCompatActivity {
 
         fos.write(bytes);
         fos.close();
-
-    }
-
-    private void initDatePicker() {
-        DatePickerDialog.OnDateSetListener dateSetListener = (view, year, month, dayOfMonth) -> {
-            month = month + 1;
-            String date = makeDateString(dayOfMonth, month, year);
-            entryDatePicker.setText(date);
-            dateOfEntry = new Date(year, month-1, dayOfMonth);
-            dateOfEntryLong = dateOfEntry.getTime();
-        };
-
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        int style = AlertDialog.THEME_HOLO_LIGHT;
-
-        datePickerDialog = new DatePickerDialog(this, style, dateSetListener, year, month, day);
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
 
     }
 
@@ -505,8 +517,6 @@ public class EntryActivity extends AppCompatActivity {
     }
 
     private void pickImage() {
-
-
         Intent intentGallery = new Intent(Intent.ACTION_PICK);
         intentGallery.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intentGallery, GALLERY_REQUEST_CODE);
