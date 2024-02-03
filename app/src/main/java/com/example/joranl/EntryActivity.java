@@ -117,7 +117,12 @@ public class EntryActivity extends AppCompatActivity {
                 }
 
             } else {
-                entryEditTextAbove.setText(entry.getEntryText());
+                if (entry.getEntryText().startsWith("###")) {
+                    String s = entry.getEntryText().replace("###", "");
+                    entryEditTextBelow.setText(s);
+                } else {
+                    entryEditTextAbove.setText(entry.getEntryText());
+                }
                 if (entry.hasImage()) {
                     entryEditTextBelow.setVisibility(View.VISIBLE);
                     entryEditTextBelow.requestFocus();
@@ -334,8 +339,11 @@ public class EntryActivity extends AppCompatActivity {
             }
             if (!entryEditTextBelow.getText().toString().equals("")) {
                 entryTextBelow = entryEditTextBelow.getText().toString().trim();
-                // TODO - make sure editText Below stay in Below textView
-                entryText = entryText + entryTextBelow;
+                if (entryEditTextAbove.getText().toString().trim().equals("")) {
+                    entryText = "###" + entryText + entryTextBelow;
+                } else {
+                    entryText = entryText + entryTextBelow;
+                }
             }
 
 
@@ -452,7 +460,11 @@ public class EntryActivity extends AppCompatActivity {
             }
             if (!entryEditTextBelow.getText().toString().equals("")) {
                 entryTextBelow = entryEditTextBelow.getText().toString().trim();
-                entryText = entryText + entryTextBelow;
+                if (entryEditTextAbove.getText().toString().trim().equals("")) {
+                    entryText = "###" + entryText + entryTextBelow;
+                } else {
+                    entryText = entryText + entryTextBelow;
+                }
             }
 
 

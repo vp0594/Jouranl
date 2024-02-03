@@ -54,6 +54,10 @@ public class EntyViewAdapter extends RecyclerView.Adapter<EntyViewAdapter.ViewHo
         if (entryWithBItMaps.get(position).getEntry().getEntryText().contains("@@@")) {
             String temp = entryWithBItMaps.get(position).getEntry().getEntryText().replace("@@@","\n");
             holder.entryTextView.setText(temp);
+        } else if (entryWithBItMaps.get(position).getEntry().getEntryText().contains("###")) {
+            String temp = entryWithBItMaps.get(position).getEntry().getEntryText().replace("###", "");
+            holder.entryTextView.setText(temp);
+
         } else {
             holder.entryTextView.setText(entryWithBItMaps.get(position).getEntry().getEntryText());
         }
