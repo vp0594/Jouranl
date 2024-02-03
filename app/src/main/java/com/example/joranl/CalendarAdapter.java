@@ -2,6 +2,7 @@ package com.example.joranl;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
                         if (holder.dayOfMonth.getText().toString().equals(monthYear[1])) {
                             intent.putExtra("id", entry.getId());
+                            // Inside an Activity
+                            SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putInt("from", 1);
+                            editor.apply();
+
                             break;
                         }
                     }
