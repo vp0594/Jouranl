@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:textColor="@color/textColor"
+        android:textColor="@color/textColor2"
         android:layout_marginBottom="5dp"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -46,7 +46,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="10dp"
                     android:paddingEnd="5dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/textColor"
                     android:layout_toStartOf="@+id/imageCardView"/>
 
                 <androidx.cardview.widget.CardView

@@ -10,9 +10,9 @@
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_marginHorizontal="10dp"
         app:cardCornerRadius="20dp"
-        app:cardElevation="0dp">
+        app:cardElevation="10dp">
 
         <SearchView
             android:id="@+id/search_bar"
@@ -31,9 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/cardView"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginEnd="10dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addEntryFAB"
@@ -42,8 +40,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/floatBackground"
         android:layout_marginBottom="16dp"
-        android:contentDescription="@string/entryButton"
-        android:src="@android:drawable/ic_menu_edit" />
+        android:src="@drawable/ic_edit"
+        android:contentDescription="@string/entryButton" />
 
 </RelativeLayout>

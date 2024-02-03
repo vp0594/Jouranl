@@ -20,7 +20,7 @@
                 android:id="@+id/entryDatePicker"
                 style="?android:spinnerStyle"
                 android:paddingRight="50dp"
-                android:textColor="@color/textColor"
+                android:textColor="@color/textColor2"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:background="@android:color/transparent"
-                android:src="@android:drawable/ic_menu_delete"
+                android:src="@drawable/ic_delete"
                 android:visibility="gone" />
 
             <EditText
@@ -100,6 +100,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/floatBackground"
         android:layout_marginBottom="16dp"
         android:src="@android:drawable/ic_menu_save" />
 
@@ -108,6 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
+        android:backgroundTint="@color/floatBackground"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"

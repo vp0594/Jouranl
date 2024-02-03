@@ -20,7 +20,7 @@ public class TabLayoutAdapter extends FragmentPagerAdapter {
     ArrayList<String> stringArrayList = new ArrayList<>();
     Context context;
 
-    int[] imgList = {android.R.drawable.ic_menu_my_calendar, android.R.drawable.ic_menu_edit};
+    int[] imgList = {R.drawable.ic_journal, R.drawable.ic_calendar};
 
     public TabLayoutAdapter(@NonNull FragmentManager fm, Context context) {
         super(fm);
